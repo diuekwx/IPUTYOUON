@@ -42,18 +42,18 @@ public class SpotifyAuthService {
     }
 
 
-    public String getAuthorizationUrl() {
-        String scope = "playlist-modify-public playlist-modify-private";
-        String url = "https://accounts.spotify.com/authorize" +
-                "?client_id=" + clientId +
-                "&response_type=code" +
-                "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
-                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8) +
-                "&show_dialog=True";
-        System.out.println("Generated Spotify Auth URL: " + url);
-        return url;
-
-    }
+//    public String getAuthorizationUrl() {
+//        String scope = "playlist-modify-public playlist-modify-private";
+//        String url = "https://accounts.spotify.com/authorize" +
+//                "?client_id=" + clientId +
+//                "&response_type=code" +
+//                "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
+//                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8) +
+//                "&show_dialog=True";
+//        System.out.println("Generated Spotify Auth URL: " + url);
+//        return url;
+//
+//    }
 
     //requesting access token
     public Users handleCallback(String code) throws IOException {
@@ -83,7 +83,7 @@ public class SpotifyAuthService {
 
         //expire token
         Integer expiresIn = (Integer) response.getBody().get("expires_in"); // in seconds
-        LocalDateTime tokenExpiry = LocalDateTime.now().plusSeconds(expiresIn);
+        Instant tokenExpiry = Instant.now().plusSeconds(expiresIn);
 
         // Get user profile info from Spotify
         HttpHeaders authHeaders = new HttpHeaders();

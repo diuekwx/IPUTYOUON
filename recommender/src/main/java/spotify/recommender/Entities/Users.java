@@ -3,6 +3,7 @@ package spotify.recommender.Entities;
 
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +21,7 @@ public class Users {
     @Column(columnDefinition = "TEXT")
     private String refreshToken;
 
-    private LocalDateTime tokenExpiry;
+    private Instant tokenExpiry;
 
     public Users() {
 
@@ -30,7 +31,7 @@ public class Users {
         this.spotifyId = spotifyId;
     }
 
-    public Users(Long key, String spotify_id, String accessToken, String refreshToken, LocalDateTime tokenExpiry) {
+    public Users(Long key, String spotify_id, String accessToken, String refreshToken, Instant tokenExpiry) {
         this.id = key;
         this.spotifyId = spotify_id;
         this.accessToken = accessToken;
@@ -70,11 +71,11 @@ public class Users {
         this.refreshToken = refreshToken;
     }
 
-    public LocalDateTime getTokenExpiry() {
+    public Instant getTokenExpiry() {
         return tokenExpiry;
     }
 
-    public void setTokenExpiry(LocalDateTime tokenExpiry) {
+    public void setTokenExpiry(Instant tokenExpiry) {
         this.tokenExpiry = tokenExpiry;
     }
 }

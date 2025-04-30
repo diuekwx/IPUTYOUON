@@ -8,7 +8,7 @@ import spotify.recommender.Service.SpotifyAuthService;
 import spotify.recommender.Service.UserService;
 
 @RestController
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin("http://127.0.0.1:5173")
 public class UserController {
 
     private final SpotifyAuthService authService;

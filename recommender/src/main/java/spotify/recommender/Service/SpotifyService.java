@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Repository.UserRepo;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -21,10 +23,13 @@ public class SpotifyService {
 
     private final SpotifyAuthService authService;
 
+    private final PlaylistService playlistService;
+
     @Autowired
-    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService){
+    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService){
         this.userRepo = userRepo;
         this.authService = authService;
+        this.playlistService = playlistService;
     }
 
     public void addTrackToPlaylist(Users user, String playlistId, String trackUri){
@@ -52,6 +57,64 @@ public class SpotifyService {
             addTrackToPlaylist(user, playlistId, trackUri);
         }
 
+    }
+
+
+    // should return a list of playlists maybe? how to do ?
+    public Object getAllPlaylists(Users user){
+        RestTemplate restTemplate = new RestTemplate();
+        String accessToken = user.getAccessToken();
+         HttpHeaders headers = new HttpHeaders();
+         headers.setBearerAuth(accessToken);
+         String userId = user.getSpotify_id();
+         HttpEntity<Object> request = new HttpEntity<>(headers);
+         // //users/ ?
+         ResponseEntity<Map> playlists = restTemplate.exchange("https://api.spotify.com/v1/users/" + userId + "/playlists",
+                  HttpMethod.GET, request, Map.class);
+         return playlists.getBody().get("items");
+    }
+
+    public  List<Playlist> getPlaylist(Users user){
+
+        List<Playlist> userPlaylist = playlistService.getUsersPlaylist(user);
+        System.out.println(userPlaylist);
+        RestTemplate restTemplate = new RestTemplate();
+
+        for (Playlist playlist: userPlaylist){
+            String playlistId = playlist.getSpotifyPlaylistId();
+
+            // token refresh change
+            String accessToken = user.getAccessToken();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(accessToken);
+            HttpEntity<Object> request = new HttpEntity<>(headers);
+
+            try{
+                restTemplate.getForEntity(
+                        "https://api.spotify.com/v1/playlists/" + playlistId,
+//                        request,
+                        Void.class
+                );
+            }
+            catch (HttpClientErrorException.Unauthorized e){
+
+                String refreshed = authService.refreshAccessToken(user);
+                user.setAccessToken(refreshed);
+                // Retry with new token
+                headers = new HttpHeaders();
+                headers.setBearerAuth(refreshed);
+                request = new HttpEntity<>(headers);
+
+                restTemplate.getForEntity(
+                        "https://api.spotify.com/v1/playlists/" + playlistId,
+//                        request,
+                        Void.class
+                );
+            }
+        }
+
+
+        return user.getPlaylistList();
     }
 
     //consider visibility

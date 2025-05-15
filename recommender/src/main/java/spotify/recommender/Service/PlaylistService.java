@@ -23,8 +23,9 @@ public class PlaylistService {
     }
 
     public List<Playlist> getUsersPlaylist(Users name){
-        return playlistRepo.findByUserOwner(name);
+        return playlistRepo.findAllByUserOwner(name);
     }
+
 
     public Playlist savePlaylist(Playlist playlist) {
         return playlistRepo.save(playlist);

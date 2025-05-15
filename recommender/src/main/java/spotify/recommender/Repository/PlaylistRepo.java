@@ -12,7 +12,7 @@ public interface PlaylistRepo extends JpaRepository<Playlist, Long> {
 
     Playlist findBySpotifyPlaylistId(String name);
 
-    List<Playlist> findByUserOwner(Users name);
+    List<Playlist> findAllByUserOwner(Users name);
 
 
 }

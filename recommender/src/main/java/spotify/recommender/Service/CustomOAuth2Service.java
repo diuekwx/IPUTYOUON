@@ -1,5 +1,6 @@
 package spotify.recommender.Service;
 
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.AbstractOAuth2Token;
@@ -15,6 +16,10 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 
 import java.time.Instant;
 
+
+//Leave setting tokens to Handler, just have this map the user to a principal
+// i.e. create or load user entity based on database, wrap it into object, spring will authenticate user for app
+
 @Service
 public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
@@ -28,11 +33,14 @@ public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest,
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
         OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(request);
 
+
         String spotifyId = oauth2User.getAttribute("id"); // This is the unique ID
         String displayName = oauth2User.getAttribute("display_name"); // This is the display name
         String accessToken = request.getAccessToken().getTokenValue();
 
-        // Attempt to find existing user by the unique Spotify ID
+
+
+                // Attempt to find existing user by the unique Spotify ID
         Users user = userRepository.findBySpotifyId(spotifyId).orElse(null);
 
         if (user == null) {
@@ -65,6 +73,8 @@ public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest,
             user.setTokenExpiry(null);
         }
 
+
+
         // *** Regarding Refresh Token: ***
         // Getting the refresh token here directly from OAuth2UserRequest is not standard.
         // You will likely need to access it after this loadUser method completes,
@@ -78,6 +88,8 @@ public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest,
         // This lets Spring inject it with @AuthenticationPrincipal
         return new CustomUserPrincipal(user, oauth2User.getAttributes());
     }
+
+
 
 
 }

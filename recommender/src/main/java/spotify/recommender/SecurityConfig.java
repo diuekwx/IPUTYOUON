@@ -1,4 +1,5 @@
 package spotify.recommender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,13 @@ public class SecurityConfig {
 
     @Value("${frontend.redirect-home-uri}")
     private String homePageUri;
+    private final CustomOAuth2AuthenticationSuccessHandler myCustomOAuth2AuthenticationSuccessHandler;
+
+    @Autowired // Autowired is optional for single constructors in recent Spring versions, but good practice
+    public SecurityConfig(CustomOAuth2AuthenticationSuccessHandler myCustomOAuth2AuthenticationSuccessHandler) {
+        this.myCustomOAuth2AuthenticationSuccessHandler = myCustomOAuth2AuthenticationSuccessHandler;
+    }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -73,8 +81,10 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
                         )
+                        .successHandler(myCustomOAuth2AuthenticationSuccessHandler)
                         .defaultSuccessUrl(homePageUri, true)
                 )
+
                 .sessionManagement(session -> session
                         // Ensure session is created if needed and used
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // IF_REQUIRED is default and usually sufficient

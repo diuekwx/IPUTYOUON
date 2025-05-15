@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Users {
@@ -23,6 +24,9 @@ public class Users {
 
     private Instant tokenExpiry;
 
+    @OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Playlist> playlistList;
+
     public Users() {
 
     }
@@ -31,12 +35,13 @@ public class Users {
         this.spotifyId = spotifyId;
     }
 
-    public Users(Long key, String spotify_id, String accessToken, String refreshToken, Instant tokenExpiry) {
+    public Users(Long key, String spotify_id, String accessToken, String refreshToken, Instant tokenExpiry, List<Playlist> playlist) {
         this.id = key;
         this.spotifyId = spotify_id;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.tokenExpiry = tokenExpiry;
+        this.playlistList = playlist;
     }
 
     public Long getId() {
@@ -77,5 +82,13 @@ public class Users {
 
     public void setTokenExpiry(Instant tokenExpiry) {
         this.tokenExpiry = tokenExpiry;
+    }
+
+    public List<Playlist> getPlaylistList() {
+        return playlistList;
+    }
+
+    public void setPlaylistList(List<Playlist> playlistList) {
+        this.playlistList = playlistList;
     }
 }

@@ -108,6 +108,32 @@ public class PlaylistController {
         // Return the JSON success response
         return ResponseEntity.ok(successResponse);
     }
+    @PostMapping("/clear")
+    public ResponseEntity<Void> clearPlaylist(Authentication authentication){
+        Object principal = authentication.getPrincipal();
+        String userId = null;
+        if (principal instanceof CustomUserPrincipal) {
+            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
+            // Ensure getUser() and getSpotify_id() match your CustomUserPrincipal and Users entity
+            // Handle potential NullPointerException if userPrincipal.getUser() is null
+            if (userPrincipal.getUser() != null) {
+                userId = userPrincipal.getUser().getSpotify_id();
+            }
+        } else if (principal instanceof OAuth2User) {
+            // Fallback: get Spotify ID directly from OAuth2User attributes
+            // This might be useful for debugging or if CustomUserPrincipal doesn't fully wrap Users entity yet
+            userId = ((OAuth2User) principal).getAttribute("id");
+        }
+        Users user = userService.getUser(userId).orElse(null);
+
+        List<Playlist> userPlaylist = user.getPlaylistList();
+        spotifyService.clearPlaylist(user);
+        System.out.println("userPlaylist: " + userPlaylist);
+        List<Playlist> p = playlistService.getUsersPlaylist(user);
+        System.out.println("userPlaylist" + p);
+        return ResponseEntity.ok().build();
+
+    }
 
 
     @PostMapping("/{playListId}/add-tracks")
@@ -126,8 +152,9 @@ public class PlaylistController {
 
     }
 
+    // Return <List<Playlist>> ?
     @GetMapping("/get-user-playlist")
-    public ResponseEntity<List<Playlist>> getPlaylist(Authentication authentication){
+    public ResponseEntity<List<String>> getPlaylist(Authentication authentication){
         String userId = null;
         Object principal = authentication.getPrincipal();
 
@@ -157,8 +184,23 @@ public class PlaylistController {
         if (userid == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        List<Playlist> playlists = spotifyService.getPlaylist(userid);
-        return  ResponseEntity.ok(playlists);
+        List<Map> playlists = spotifyService.getPlaylist(userid);
+
+        List<String> playlistLinks = new ArrayList<>();
+        for (Map p: playlists){
+            Object bodyOf = p.get("external_urls");
+
+            if (bodyOf instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> externalUrls = (Map<String, Object>) bodyOf;
+
+                String acutalLink = (String) externalUrls.get("spotify");
+
+                playlistLinks.add(acutalLink);
+            }
+        }
+        System.out.println("Playlist links: " + playlistLinks);
+        return  ResponseEntity.ok(playlistLinks);
 
     }
 

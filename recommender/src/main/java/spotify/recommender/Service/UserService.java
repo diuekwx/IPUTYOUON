@@ -34,6 +34,7 @@ public class UserService {
     }
 
     public void saveOrUpdateWithTokens(Authentication auth, String clientRegistration){
+        System.out.println("actiavtion");
         Object principal = auth.getPrincipal();
         String principalName = null;
 
@@ -67,7 +68,7 @@ public class UserService {
 
             // Get the refresh token string value if the refresh token exists
             String refreshTokenValue = (refreshToken != null) ? refreshToken.getTokenValue() : null;
-
+            System.out.println(refreshTokenValue);
             // Update your Users entity with the token information
             if (user != null) {
                 user.setAccessToken(accessTokenValue);

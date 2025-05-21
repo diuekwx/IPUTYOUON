@@ -1,5 +1,6 @@
 package spotify.recommender.Service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
+import spotify.recommender.Repository.PlaylistRepo;
 import spotify.recommender.Repository.UserRepo;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -25,11 +24,14 @@ public class SpotifyService {
 
     private final PlaylistService playlistService;
 
+    private final PlaylistRepo playlistRepo;
+
     @Autowired
-    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService){
+    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo){
         this.userRepo = userRepo;
         this.authService = authService;
         this.playlistService = playlistService;
+        this.playlistRepo = playlistRepo;
     }
 
     public void addTrackToPlaylist(Users user, String playlistId, String trackUri){
@@ -74,27 +76,45 @@ public class SpotifyService {
          return playlists.getBody().get("items");
     }
 
-    public  List<Playlist> getPlaylist(Users user){
+    @Transactional
+    public void clearPlaylist(Users user){
+        playlistRepo.deleteByUserOwner(user);
+    }
+
+    public List<Map> getPlaylist(Users user){
 
         List<Playlist> userPlaylist = playlistService.getUsersPlaylist(user);
         System.out.println(userPlaylist);
         RestTemplate restTemplate = new RestTemplate();
+        String accessToken = user.getAccessToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        List<Map> playlistList = new ArrayList<>();
+        String playlistId;
 
         for (Playlist playlist: userPlaylist){
-            String playlistId = playlist.getSpotifyPlaylistId();
+            playlistId = playlist.getSpotifyPlaylistId();
 
             // token refresh change
-            String accessToken = user.getAccessToken();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(accessToken);
+
             HttpEntity<Object> request = new HttpEntity<>(headers);
 
             try{
-                restTemplate.getForEntity(
+                // exchange for auth header
+                ResponseEntity<Map> response = restTemplate.exchange(
                         "https://api.spotify.com/v1/playlists/" + playlistId,
-//                        request,
-                        Void.class
+                        HttpMethod.GET,
+                        request,
+                        Map.class
                 );
+                if (response.getStatusCode().is2xxSuccessful()){
+                    playlistList.add((response.getBody()));
+                }
+                else {
+                    playlistList.add(null);
+                }
+
             }
             catch (HttpClientErrorException.Unauthorized e){
 
@@ -105,16 +125,18 @@ public class SpotifyService {
                 headers.setBearerAuth(refreshed);
                 request = new HttpEntity<>(headers);
 
-                restTemplate.getForEntity(
+                restTemplate.exchange(
                         "https://api.spotify.com/v1/playlists/" + playlistId,
-//                        request,
+                        HttpMethod.GET,
+                        request,
                         Void.class
                 );
             }
         }
 
 
-        return user.getPlaylistList();
+
+        return playlistList;
     }
 
     //consider visibility

@@ -14,5 +14,7 @@ public interface PlaylistRepo extends JpaRepository<Playlist, Long> {
 
     List<Playlist> findAllByUserOwner(Users name);
 
+    void deleteByUserOwner(Users name);
+
 
 }

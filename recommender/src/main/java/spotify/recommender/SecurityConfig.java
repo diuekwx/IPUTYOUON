@@ -82,7 +82,7 @@ public class SecurityConfig {
                                 .userService(customOAuth2UserService)
                         )
                         .successHandler(myCustomOAuth2AuthenticationSuccessHandler)
-                        .defaultSuccessUrl(homePageUri, true)
+//                        .defaultSuccessUrl(homePageUri, true)
                 )
 
                 .sessionManagement(session -> session

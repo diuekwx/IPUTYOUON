@@ -184,23 +184,25 @@ public class PlaylistController {
         if (userid == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        List<Map> playlists = spotifyService.getPlaylist(userid);
+        List<String> playlists = spotifyService.getPlaylist(userid);
 
-        List<String> playlistLinks = new ArrayList<>();
-        for (Map p: playlists){
-            Object bodyOf = p.get("external_urls");
-
-            if (bodyOf instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> externalUrls = (Map<String, Object>) bodyOf;
-
-                String acutalLink = (String) externalUrls.get("spotify");
-
-                playlistLinks.add(acutalLink);
-            }
-        }
-        System.out.println("Playlist links: " + playlistLinks);
-        return  ResponseEntity.ok(playlistLinks);
+//        List<String> playlistLinks = new ArrayList<>();
+//        for (Map p: playlists){
+//            Object bodyOf = p.get("external_urls");
+//
+//            if (bodyOf instanceof Map) {
+//                @SuppressWarnings("unchecked")
+//                Map<String, Object> externalUrls = (Map<String, Object>) bodyOf;
+//
+//                String acutalLink = (String) externalUrls.get("spotify");
+//
+//                playlistLinks.add(acutalLink);
+//            }
+//        }
+//        System.out.println("Playlist links: " + playlistLinks);
+//        return  ResponseEntity.ok(playlistLinks);
+        System.out.println("Playlist links: " + playlists);
+        return  ResponseEntity.ok(playlists);
 
     }
 

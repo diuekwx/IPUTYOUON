@@ -81,7 +81,8 @@ public class SpotifyService {
         playlistRepo.deleteByUserOwner(user);
     }
 
-    public List<Map> getPlaylist(Users user){
+    //LOL for embeds you just need the playlist ID not the entire link HAHAHAHAHAHA whoops...
+    public List<String> getPlaylist(Users user){
 
         List<Playlist> userPlaylist = playlistService.getUsersPlaylist(user);
         System.out.println(userPlaylist);
@@ -90,14 +91,14 @@ public class SpotifyService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        List<Map> playlistList = new ArrayList<>();
+//        List<Map> playlistList = new ArrayList<>();
+        List<String> playlistList = new ArrayList<>();
         String playlistId;
 
         for (Playlist playlist: userPlaylist){
             playlistId = playlist.getSpotifyPlaylistId();
 
             // token refresh change
-
             HttpEntity<Object> request = new HttpEntity<>(headers);
 
             try{
@@ -109,7 +110,8 @@ public class SpotifyService {
                         Map.class
                 );
                 if (response.getStatusCode().is2xxSuccessful()){
-                    playlistList.add((response.getBody()));
+//                    playlistList.add((response.getBody()));
+                    playlistList.add(playlistId);
                 }
                 else {
                     playlistList.add(null);
@@ -133,9 +135,6 @@ public class SpotifyService {
                 );
             }
         }
-
-
-
         return playlistList;
     }
 

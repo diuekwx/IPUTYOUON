@@ -17,7 +17,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import java.time.Instant;
 
 
-//Leave setting tokens to Handler, just have this map the user to a principal
+// leave setting tokens to handler, just have this map the user to a principal
 // i.e. create or load user entity based on database, wrap it into object, spring will authenticate user for app
 
 @Service
@@ -39,30 +39,17 @@ public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest,
         String accessToken = request.getAccessToken().getTokenValue();
 
 
-
-                // Attempt to find existing user by the unique Spotify ID
         Users user = userRepository.findBySpotifyId(spotifyId).orElse(null);
 
         if (user == null) {
-            // User does not exist, create a new one
+
             user = new Users();
-            user.setSpotify_id(spotifyId); // <-- Set the unique Spotify ID here!
-//            user.setDisplayName(displayName); // <-- Set the display name in a different field if you have one
-            // Set other initial properties if needed
-        } else {
-            // User exists, update their display name if necessary (display names can change)
-//            user.setDisplayName(displayName); // <-- Update display name if you have a field for it
+            user.setSpotify_id(spotifyId);
+
         }
 
-        // Always update the access token as it might have been refreshed
+        // update the access token  might have been refreshed
         user.setAccessToken(accessToken);
-
-        // Handle refresh token and expiry (based on whether columns are nullable or if data is needed)
-        // Get refresh token (might be null if not issued or not configured)
-//        OAuth2RefreshToken refreshToken = request.getOAuth2AccessToken().getRefreshToken(); // This is null on OAuth2AccessToken itself, need to get from authorized client
-        // **Correction:** Refresh token is NOT directly on OAuth2AccessToken.
-        // You need to access the OAuth2AuthorizedClient or the Authentication object after this method.
-        // For now, handle nullable column or fetch it later.
 
         // Get token expiry (available on OAuth2AccessToken)
         Instant tokenExpiry = request.getAccessToken().getExpiresAt();
@@ -73,19 +60,8 @@ public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest,
             user.setTokenExpiry(null);
         }
 
-
-
-        // *** Regarding Refresh Token: ***
-        // Getting the refresh token here directly from OAuth2UserRequest is not standard.
-        // You will likely need to access it after this loadUser method completes,
-        // possibly by injecting OAuth2AuthorizedClientService and retrieving the
-        // OAuth2AuthorizedClient associated with the authenticated user.
-        // For now, rely on the column being nullable if the refresh token is null.
-
-
         userRepository.save(user); // Save the created or updated user
 
-        // This lets Spring inject it with @AuthenticationPrincipal
         return new CustomUserPrincipal(user, oauth2User.getAttributes());
     }
 

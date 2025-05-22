@@ -14,6 +14,7 @@ public class CustomUserPrincipal implements OAuth2User {
     private final Users user;
     private final Map<String, Object> attributes;
 
+    //tying auth to user entity
     public CustomUserPrincipal(Users user, Map<String, Object> attributes) {
         this.user = user;
         this.attributes = attributes;
@@ -23,6 +24,7 @@ public class CustomUserPrincipal implements OAuth2User {
         return user;
     }
 
+
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;
@@ -30,7 +32,7 @@ public class CustomUserPrincipal implements OAuth2User {
 
     @Override
     public String getName() {
-        return user.getSpotify_id(); // or whatever you want to identify them by
+        return user.getSpotify_id();
     }
 
     @Override

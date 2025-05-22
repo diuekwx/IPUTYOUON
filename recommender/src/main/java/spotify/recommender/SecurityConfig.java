@@ -57,6 +57,7 @@ public class SecurityConfig {
     }
 
 
+    // uhhhh have to ensure auth on certain pages l8r
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            CustomOAuth2Service customOAuth2UserService,
@@ -64,7 +65,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                // Explicitly configure the securityContextRepository
+                // explicitly configure the securityContextRepository
                 .securityContext(securityContext -> securityContext
                         .securityContextRepository(securityContextRepository)
                 )

@@ -24,7 +24,6 @@ public class TrackSuggestion {
     @Column(length = 20)
     private String status = "pending";
 
-    // Getters & Setters
 
     public Long getId() {
         return id;

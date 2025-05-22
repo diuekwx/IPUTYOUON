@@ -32,28 +32,12 @@ public class SpotifyAuthService {
     @Value("${spotify.redirect-uri}")
     private String redirectUri;
 
-
-
-
     private final UserRepo userRepo;
     @Autowired
     public SpotifyAuthService(UserRepo userRepo){
         this.userRepo = userRepo;
     }
 
-
-//    public String getAuthorizationUrl() {
-//        String scope = "playlist-modify-public playlist-modify-private";
-//        String url = "https://accounts.spotify.com/authorize" +
-//                "?client_id=" + clientId +
-//                "&response_type=code" +
-//                "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8) +
-//                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8) +
-//                "&show_dialog=True";
-//        System.out.println("Generated Spotify Auth URL: " + url);
-//        return url;
-//
-//    }
 
     //requesting access token
     public Users handleCallback(String code) throws IOException {

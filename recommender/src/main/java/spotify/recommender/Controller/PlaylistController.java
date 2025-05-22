@@ -32,7 +32,7 @@ public class PlaylistController {
     }
 
 
-
+    // lowkey should just make a method to get the auth principal  and userID auth check
     public static class PlaylistRequest {
         private String name;
         private String description;
@@ -48,28 +48,23 @@ public class PlaylistController {
     public ResponseEntity<Map<String, String>> createPlaylist(@RequestBody PlaylistRequest playlistRequest,
                                                               Authentication authentication) { // Inject the Authentication object
 
-        // Get the authenticated principal
         Object principal = authentication.getPrincipal();
 
         String userId = null;
         if (principal instanceof CustomUserPrincipal) {
             CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
-            // Ensure getUser() and getSpotify_id() match your CustomUserPrincipal and Users entity
-            // Handle potential NullPointerException if userPrincipal.getUser() is null
+
             if (userPrincipal.getUser() != null) {
                 userId = userPrincipal.getUser().getSpotify_id();
             }
         } else if (principal instanceof OAuth2User) {
-            // Fallback: get Spotify ID directly from OAuth2User attributes
-            // This might be useful for debugging or if CustomUserPrincipal doesn't fully wrap Users entity yet
+
             userId = ((OAuth2User) principal).getAttribute("id");
         }
 
 
         if (userId == null) {
-            // This should ideally not happen if authentication was successful,
-            // but handle the case where user ID couldn't be retrieved from principal.
-            // Return a JSON error response
+
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
@@ -79,7 +74,6 @@ public class PlaylistController {
         System.out.println("Playlist Name: " + playlistRequest.getName());
         System.out.println("Playlist Description: " + playlistRequest.getDescription());
 
-        // Call your service to create the playlist using the userId and playlistRequest data
         // String createdPlaylistId = playlistService.createSpotifyPlaylist(userId, playlistRequest);
         Users user = userService.getUser(userId).orElse(null);
         String name = playlistRequest.getName();
@@ -98,9 +92,8 @@ public class PlaylistController {
         System.out.println(userPlaylist);
         userService.saveUser(user);
 
-        // Prepare a JSON success response
+        // prepare a JSON success response
         Map<String, String> successResponse = new HashMap<>();
-        // Replace with the actual created playlist ID if you have one
         successResponse.put("message", "Playlist creation simulated successfully.");
         successResponse.put("userId", userId); // Include user ID in response for confirmation
         // successResponse.put("playlistId", createdPlaylistId); // Include actual playlist ID if available
@@ -114,14 +107,12 @@ public class PlaylistController {
         String userId = null;
         if (principal instanceof CustomUserPrincipal) {
             CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
-            // Ensure getUser() and getSpotify_id() match your CustomUserPrincipal and Users entity
-            // Handle potential NullPointerException if userPrincipal.getUser() is null
+
             if (userPrincipal.getUser() != null) {
                 userId = userPrincipal.getUser().getSpotify_id();
             }
         } else if (principal instanceof OAuth2User) {
-            // Fallback: get Spotify ID directly from OAuth2User attributes
-            // This might be useful for debugging or if CustomUserPrincipal doesn't fully wrap Users entity yet
+
             userId = ((OAuth2User) principal).getAttribute("id");
         }
         Users user = userService.getUser(userId).orElse(null);
@@ -160,21 +151,16 @@ public class PlaylistController {
 
         if (principal instanceof CustomUserPrincipal) {
             CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
-            // Ensure getUser() and getSpotify_id() match your CustomUserPrincipal and Users entity
-            // Handle potential NullPointerException if userPrincipal.getUser() is null
             if (userPrincipal.getUser() != null) {
                 userId = userPrincipal.getUser().getSpotify_id();
             }
         } else if (principal instanceof OAuth2User) {
-            // Fallback: get Spotify ID directly from OAuth2User attributes
-            // This might be useful for debugging or if CustomUserPrincipal doesn't fully wrap Users entity yet
+            // if doesnt wokr get Spotify ID directly from OAuth2User attributes
             userId = ((OAuth2User) principal).getAttribute("id");
         }
 
         if (userId == null) {
-            // This should ideally not happen if authentication was successful,
-            // but handle the case where user ID couldn't be retrieved from principal.
-            // Return a JSON error response
+
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());

@@ -23,15 +23,28 @@ public class Playlist {
     @Column(name = "playlist_name", columnDefinition = "TEXT")
     private String playlistName;
 
+    @Column(name = "row_index", insertable = false)
+    private int rowIndex;
+
     public Playlist() {
     }
 
-    public Playlist(long id, String spotifyPlaylistId, Users userOwner, String description, String playlistName) {
+    public Playlist(long id, String spotifyPlaylistId, Users userOwner, String description, String playlistName, int rowIndex) {
         this.id = id;
         this.spotifyPlaylistId = spotifyPlaylistId;
         this.userOwner = userOwner;
         this.description = description;
         this.playlistName = playlistName;
+        this.rowIndex = rowIndex;
+    }
+
+
+    public int getRowIndex() {
+        return rowIndex;
+    }
+
+    public void setRowIndex(int rowIndex) {
+        this.rowIndex = rowIndex;
     }
 
     public String getPlaylistName() {

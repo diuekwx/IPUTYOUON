@@ -206,5 +206,37 @@ public class PlaylistController {
 
     }
 
+    @GetMapping("/feed")
+    public ResponseEntity<List<String>> displayFeed(Authentication authentication){
+        String userId = "";
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof CustomUserPrincipal){
+            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
+            if (userPrincipal.getUser() != null) {
+                userId = userPrincipal.getUser().getSpotify_id();
+            }
+        }
+        else if (principal instanceof OAuth2User) {
+
+            userId = ((OAuth2User) principal).getAttribute("id");
+        }
+        if (userId == null) {
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());
+        }
+
+        Users userid = userService.getUser(userId).orElse(null);
+        if (userid == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        List<String> feedPlaylist = playlistService.getUserFeed(userid, 2);
+        System.out.println(feedPlaylist);
+        return ResponseEntity.ok(feedPlaylist);
+
+    }
+
 
 }

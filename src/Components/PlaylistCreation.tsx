@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './PlaylistCreation.css';
 
 export default function PlaylistCreation() {
@@ -8,7 +9,8 @@ export default function PlaylistCreation() {
     const [desc, setDesc] = useState('');
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get('session');
-    
+    const navigate = useNavigate();
+
 
     const printStuff = () => {
         console.log('Name:', name);
@@ -30,11 +32,11 @@ export default function PlaylistCreation() {
                     description: `${desc}`,
                 }),
             });
-            
+
             // Log complete response for debugging
             console.log("Response status:", response.status);
             console.log("Response headers:", [...response.headers.entries()]);
-            
+
             if (response.ok) {
                 const data = await response.json();
                 setStatus("Success! Playlist ID: " + data);
@@ -50,25 +52,38 @@ export default function PlaylistCreation() {
     };
 
 
-    
+
     return (
         <div className="playlist-creation">
-            <h1>Spotify Playlist Creation</h1>
+            <h1><b>Spotify Playlist Creation</b></h1>
 
             <div>
                 <textarea id="title"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="type text here...">
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="type text here..."
+                    rows={1}>
                 </textarea>
-                <textarea id="description"
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="type text here...">
-                </textarea>
+                <p>title</p>
             </div>
-            
-            <button onClick={createPlaylistz}>CREATE</button>
+
+            <div>
+                <textarea id="description"
+                    value={desc}
+                    onChange={(e) => setDesc(e.target.value)}
+                    placeholder="type text here..."
+                    rows={1}>
+                </textarea>
+                <p>description</p>
+            </div>
+
+            <div>
+                <button onClick={createPlaylistz}>CREATE</button>
+                <p>Playlist will appear on username's account</p>
+            </div>
+
+
+            <button className="cancel" onClick={() => navigate('/Home')}><b>X</b></button>
 
         </div>
     );

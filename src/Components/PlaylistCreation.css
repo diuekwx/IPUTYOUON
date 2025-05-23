@@ -8,6 +8,13 @@
     gap: 100px;
 }
 
+.playlist-creation div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .playlist-creation h1 {
     color: white;
     font-size: 40;
@@ -33,8 +40,33 @@
     resize: none;
     border: none;
     border-bottom: 3px solid white;
-    color: whitesmoke;
-    font-size: 18px;
+    color: white;
+    font-size: 24px;
     text-align: center;
     width: 50vw;
+}
+
+.playlist-creation textarea:focus {
+    outline: none;
+}
+
+.playlist-creation p {
+    width: 50vw;
+    text-align: center;
+    font-size: 18px;
+    color: white;
+}
+
+.playlist-creation .cancel {
+    position: absolute;
+    width: 60px;
+    border-radius: 50px;
+    text-align: center;
+    top: 15px;
+    left: 15px;
+}
+
+.playlist-creation .cancel:hover {
+    border-color: hotpink;
+    color: hotpink;
 }

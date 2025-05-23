@@ -1,0 +1,94 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cd-spin {
+  animation: spin 10s linear infinite;
+  position: absolute;
+  width: 65%;
+  top: -45vh;
+  left: -10vw;
+  z-index: -1;
+}
+
+.login-button {
+  position: absolute;
+  top: 3vh;
+  right: 3vh;
+  width: 140px;
+  border: 3px solid white;
+  background-color: black;
+  border-radius: 8px;
+  color: white;
+  font-size: 18px;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-button:hover {
+  border: 3px solid #535bf2;
+  color: #535bf2;
+}
+
+.homepage {
+  display: flex;
+  flex-direction: column;
+  width: 47vw;
+  position: absolute;
+  right: 10vw;
+  top: 8vh;
+  padding: 2rem;
+}
+
+.homepage h1 {
+  font-size: 160px;
+  color: white;
+  text-align: left;
+  line-height: 80%;
+}
+
+.homepage p {
+  font-size: 20px;
+  color: white;
+  text-align: center;
+  line-height: 90%;
+  width: 30vw;
+}
+
+.homepage-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 43vh;
+}
+
+.homepage-buttons button {
+  width: 30vw;
+  border: 3px solid white;
+  background-color: black;
+  border-radius: 8px;
+  color: white;
+  font-size: 18px;
+}
+
+.button1:hover {
+  border-color: hotpink;
+  color: hotpink;
+}
+
+.button2:hover {
+  border-color: rgb(40, 148, 255);
+  color: rgb(40, 148, 255);
+}
+
+.button3:hover {
+  border-color: greenyellow;
+  color: greenyellow;
+}

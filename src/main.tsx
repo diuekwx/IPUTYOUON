@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LandingPage from './Components/LandingPage';
 import UserHome from './Components/UserHome';
 import Feed from './Components/Feed';
+import PlaylistCreation from './Components/PlaylistCreation';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path:'Feed',
     element: <Feed/>
+  },
+  {
+  path: 'playlist-creation',
+  element: <PlaylistCreation />
   }
 ]);
 

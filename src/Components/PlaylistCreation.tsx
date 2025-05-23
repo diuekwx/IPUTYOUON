@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
+import './PlaylistCreation.css';
 
 export default function PlaylistCreation() {
     const [status, setStatus] = useState<string>("");
@@ -51,25 +52,23 @@ export default function PlaylistCreation() {
 
     
     return (
-        <div>
-            <h3>Spotify Playlist Creation</h3>
-
-            <button onClick={createPlaylistz}>Create Playlist</button>
+        <div className="playlist-creation">
+            <h1>Spotify Playlist Creation</h1>
 
             <div>
-                <textarea id="name"
+                <textarea id="title"
                 value={name}
-                onChange={(e) => setName(e.target.value)}>
+                onChange={(e) => setName(e.target.value)}
+                placeholder="type text here...">
                 </textarea>
                 <textarea id="description"
                 value={desc}
-                onChange={(e) => setDesc(e.target.value)}>
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="type text here...">
                 </textarea>
-
             </div>
             
-            
-
+            <button onClick={createPlaylistz}>CREATE</button>
 
         </div>
     );

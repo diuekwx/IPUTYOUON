@@ -1,0 +1,40 @@
+.playlist-creation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    gap: 100px;
+}
+
+.playlist-creation h1 {
+    color: white;
+    font-size: 40;
+}
+
+.playlist-creation button {
+    width: 30vw;
+    border: 3px solid white;
+    background-color: black;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+}
+
+.playlist-creation button:hover {
+    border-color: greenyellow;
+    color: greenyellow;
+}
+
+.playlist-creation textarea {
+    display: flex;
+    flex-direction: column;
+    resize: none;
+    border: none;
+    border-bottom: 3px solid white;
+    color: whitesmoke;
+    font-size: 18px;
+    text-align: center;
+    width: 50vw;
+}

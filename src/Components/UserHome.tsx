@@ -1,7 +1,10 @@
-import {useState, useEffect, use} from 'react'
+import { useState, useEffect, use } from 'react'
 import PlaylistCreation from './PlaylistCreation';
 import PlaylistEmbed from './PlaylistEmbed';
 import { useNavigate } from 'react-router-dom';
+import cd_disk from '../assets/cd.png';
+import spotify_logo from '../assets/spotify-logo.png';
+import './UserHome.css';
 
 
 export default function UserHome() {
@@ -23,13 +26,13 @@ export default function UserHome() {
     //             console.log("Not logged in");
     //         }
     //     };
-    
+
     //     fetchUser();
     // }, []);
 
     useEffect(() => {
 
-        const fetchPlaylist = async() => {
+        const fetchPlaylist = async () => {
 
         }
     })
@@ -45,7 +48,7 @@ export default function UserHome() {
             },
         })
         console.log("Response status:", response.status);
-        if (response.ok){
+        if (response.ok) {
             setShowPlaylist(true);
             const data = await response.json();
             setplayListLink(data);
@@ -61,26 +64,35 @@ export default function UserHome() {
     //             }
     //         });
     //     console.log("Response status:", response.status);
-        
+
     // }
 
-      const feed = () => {
-        navigate('/feed'); 
+    const feed = () => {
+        navigate('/feed');
     };
 
     return (
         <>
-
-        <button onClick={() => getUserPlaylist()}> GET USER PLAYLIST</button>
-        <h1> TIRED OF UR BUM ASS FRIENDS AND THEIR SHIT MUSIC? </h1>
-        <h1> LET ITNERNET STRANGERS WHO INDLUDGE IN THE MSOT OBSCURE GENRES PUT YOU ON!@!! </h1>
-        <button onClick={() => setShowCreation(true)}> Create Playlist</button>
-        {showCreation ? <PlaylistCreation/> : null}
-        {/* <button onClick={() => clearBtn()}>Clear</button> */}
-        {showPlaylist ? <PlaylistEmbed listOfPlaylist={playListLink}/> : null}
-        <button onClick={() => feed()}>FEED</button>
+            <img src={cd_disk} className="cd-spin"></img>
+            <div className="homepage">
+                <h1><b>I PUT<br></br>YOU ON</b></h1>
+                <div className="homepage-buttons">
+                    <p> <br></br>tired of ur bum ass friends and their sh*t music?<br></br>
+                        let itnernet strangers who indludge in the msot obscure genres put you on!@!!</p>
+                    <button className="button1" onClick={() => getUserPlaylist()}>YOUR PLAYLISTS</button>
+                    <button className="button2" onClick={() => navigate('/playlist-creation')}>CREATE NEW PLAYLIST</button>
+                    {/*
+                    <button className="button2" onClick={() => setShowCreation(true)}>CREATE NEW PLAYLIST</button>
+                    {showCreation ? <PlaylistCreation/> : null}
+                    {/* <button onClick={() => clearBtn()}>Clear</button> (THIS WAS ALSO A COMMENT)/}
+                    {showPlaylist ? <PlaylistEmbed listOfPlaylist={playListLink}/> : null}
+                    COMMENTED OUT BC THIS WAS THE OLD PLAYLIST CREATION BUTTON, DONT KNOW IF ITS IMPORTANT*/}
+                    <button className="button3" onClick={() => feed()}>COMMUNITY FEED</button>
+                </div>
+            </div>
+            <button className="login-button">Log In<img src={spotify_logo} width="30px"></img></button>
         </>
-        
+
     )
 
 }

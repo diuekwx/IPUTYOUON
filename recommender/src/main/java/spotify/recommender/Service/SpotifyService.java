@@ -3,16 +3,21 @@ package spotify.recommender.Service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import spotify.recommender.CustomUserPrincipal;
 import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Repository.PlaylistRepo;
 import spotify.recommender.Repository.UserRepo;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,13 +31,68 @@ public class SpotifyService {
 
     private final PlaylistRepo playlistRepo;
 
+    private final UserService userService;
+
     @Autowired
-    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo){
+    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo, UserService userService){
         this.userRepo = userRepo;
         this.authService = authService;
         this.playlistService = playlistService;
         this.playlistRepo = playlistRepo;
+        this.userService = userService;
     }
+
+    // track Id returns
+    //fix returns lol
+    public List<String> searchTrack(Users user, String query){
+        String accessToken = user.getAccessToken();
+        System.out.println("accesstoken" + accessToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        String adjusted = query.replace(" ", "+");
+        List<String> ids = new ArrayList<>();
+        try{
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    "https://api.spotify.com/v1/search?q=" + adjusted + "&type=track&limit=5",
+                    HttpMethod.GET, request, Map.class
+            );
+            if (response.getStatusCode().is2xxSuccessful()){
+                Map<String, Object> map = response.getBody();
+                Object tracks = map.get("tracks");
+
+                if (tracks instanceof Map){
+                    Map<String, Object> convertedTracks = (Map<String, Object>) tracks;
+                    List<Map<String, Object>> items = (List<Map<String, Object>>) convertedTracks.get("items");
+                    ids = items.stream().map(item -> (String) item.get("id")).collect(Collectors.toUnmodifiableList());
+                }
+
+                return ids;
+
+            }
+            else{
+                return ids;
+            }
+        }
+        catch (HttpClientErrorException.Unauthorized e){
+
+            String refreshed = authService.refreshAccessToken(user);
+            user.setAccessToken(refreshed);
+            // Retry with new token
+            headers = new HttpHeaders();
+            headers.setBearerAuth(refreshed);
+            request = new HttpEntity<>(headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    "https://api.spotify.com/v1/search?q=" + adjusted + "&type=track&limit=10",
+                    HttpMethod.GET, request, Map.class
+            );
+            return ids;
+        }
+    }
+
 
     public void addTrackToPlaylist(Users user, String playlistId, String trackUri){
         String accessToken = user.getAccessToken();
@@ -60,6 +120,7 @@ public class SpotifyService {
         }
 
     }
+
 
 
     // should return a list of playlists maybe? how to do ?
@@ -167,6 +228,34 @@ public class SpotifyService {
             throw e; // rethrow other errors
         }
 
+    }
+
+    public Users getUser(Authentication authentication){
+        String userId = "";
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof CustomUserPrincipal){
+            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
+            if (userPrincipal.getUser() != null) {
+                userId = userPrincipal.getUser().getSpotify_id();
+            }
+        }
+        else if (principal instanceof OAuth2User) {
+
+            userId = ((OAuth2User) principal).getAttribute("id");
+        }
+        if (userId == null) {
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
+            return null;
+        }
+
+        Users userid = userService.getUser(userId).orElse(null);
+        if (userid == null) {
+            return null;
+        }
+        return userid;
     }
 
 

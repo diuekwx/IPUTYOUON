@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import spotify.recommender.CustomUserPrincipal;
 import spotify.recommender.Entities.Playlist;
+import spotify.recommender.Entities.TrackSuggestion;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Service.PlaylistService;
 import spotify.recommender.Service.SpotifyService;
@@ -33,6 +34,8 @@ public class PlaylistController {
 
 
     // lowkey should just make a method to get the auth principal  and userID auth check
+
+
     public static class PlaylistRequest {
         private String name;
         private String description;
@@ -43,90 +46,73 @@ public class PlaylistController {
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
     }
+
+    public static class TrackSuggestionRequest {
+        private String query;
+
+        public String getQuery(){return query;};
+        public void setQuery(String query){this.query = query; }
+    }
     @PostMapping("/create")
     // Change return type to ResponseEntity<Map<String, String>> or a custom response object
     public ResponseEntity<Map<String, String>> createPlaylist(@RequestBody PlaylistRequest playlistRequest,
                                                               Authentication authentication) { // Inject the Authentication object
 
-        Object principal = authentication.getPrincipal();
+        Users userid = spotifyService.getUser(authentication);
 
-        String userId = null;
-        if (principal instanceof CustomUserPrincipal) {
-            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
-
-            if (userPrincipal.getUser() != null) {
-                userId = userPrincipal.getUser().getSpotify_id();
-            }
-        } else if (principal instanceof OAuth2User) {
-
-            userId = ((OAuth2User) principal).getAttribute("id");
-        }
-
-
-        if (userId == null) {
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
-
-        System.out.println("Creating playlist for user: " + userId);
+        System.out.println("Creating playlist for user: " + userid);
         System.out.println("Playlist Name: " + playlistRequest.getName());
         System.out.println("Playlist Description: " + playlistRequest.getDescription());
 
         // String createdPlaylistId = playlistService.createSpotifyPlaylist(userId, playlistRequest);
-        Users user = userService.getUser(userId).orElse(null);
+
         String name = playlistRequest.getName();
         String desc = playlistRequest.getDescription();
-        String playlistId = spotifyService.createPlaylist(user, name, desc);
+        String playlistId = spotifyService.createPlaylist(userid, name, desc);
         Playlist playlist = new Playlist();
         playlist.setSpotifyPlaylistId(playlistId);
-        playlist.setUserOwner(user);
+        playlist.setUserOwner(userid);
         playlist.setPlaylistName(name);
         playlist.setDescription(desc);
         playlistService.savePlaylist(playlist);
 
-        List<Playlist> userPlaylist = user.getPlaylistList();
+        List<Playlist> userPlaylist = userid.getPlaylistList();
         userPlaylist.add(playlist);
 //        userPlaylist.clear();
         System.out.println(userPlaylist);
-        userService.saveUser(user);
+        userService.saveUser(userid);
 
         // prepare a JSON success response
         Map<String, String> successResponse = new HashMap<>();
         successResponse.put("message", "Playlist creation simulated successfully.");
-        successResponse.put("userId", userId); // Include user ID in response for confirmation
-        // successResponse.put("playlistId", createdPlaylistId); // Include actual playlist ID if available
+        successResponse.put("userId", userid.getSpotify_id()); // Include user ID in response for confirmation
+
 
         // Return the JSON success response
         return ResponseEntity.ok(successResponse);
     }
     @PostMapping("/clear")
     public ResponseEntity<Void> clearPlaylist(Authentication authentication){
-        Object principal = authentication.getPrincipal();
-        String userId = null;
-        if (principal instanceof CustomUserPrincipal) {
-            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
+        Users userid = spotifyService.getUser(authentication);
 
-            if (userPrincipal.getUser() != null) {
-                userId = userPrincipal.getUser().getSpotify_id();
-            }
-        } else if (principal instanceof OAuth2User) {
-
-            userId = ((OAuth2User) principal).getAttribute("id");
-        }
-        Users user = userService.getUser(userId).orElse(null);
-
-        List<Playlist> userPlaylist = user.getPlaylistList();
-        spotifyService.clearPlaylist(user);
+        List<Playlist> userPlaylist = userid.getPlaylistList();
+        spotifyService.clearPlaylist(userid);
         System.out.println("userPlaylist: " + userPlaylist);
-        List<Playlist> p = playlistService.getUsersPlaylist(user);
+        List<Playlist> p = playlistService.getUsersPlaylist(userid);
         System.out.println("userPlaylist" + p);
         return ResponseEntity.ok().build();
 
     }
 
+    //should return some track ID
+    @GetMapping("/search")
+    public ResponseEntity<List<String>> searchQuery(Authentication authentication, @RequestParam String query){
+        Users userid  = spotifyService.getUser(authentication);
+        List<String> getTracks = spotifyService.searchTrack(userid, query);
+        return ResponseEntity.ok(getTracks);
+    }
 
+    //
     @PostMapping("/{playListId}/add-tracks")
     public ResponseEntity<Void> addTracksToPlaylist(
         @PathVariable String playlistId,
@@ -146,30 +132,7 @@ public class PlaylistController {
     // Return <List<Playlist>> ?
     @GetMapping("/get-user-playlist")
     public ResponseEntity<List<String>> getPlaylist(Authentication authentication){
-        String userId = null;
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof CustomUserPrincipal) {
-            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
-            if (userPrincipal.getUser() != null) {
-                userId = userPrincipal.getUser().getSpotify_id();
-            }
-        } else if (principal instanceof OAuth2User) {
-            // if doesnt wokr get Spotify ID directly from OAuth2User attributes
-            userId = ((OAuth2User) principal).getAttribute("id");
-        }
-
-        if (userId == null) {
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());
-        }
-
-        Users userid = userService.getUser(userId).orElse(null);
-        if (userid == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        Users userid = spotifyService.getUser(authentication);
         List<String> playlists = spotifyService.getPlaylist(userid);
 
 //        List<String> playlistLinks = new ArrayList<>();
@@ -194,35 +157,17 @@ public class PlaylistController {
 
     @GetMapping("/feed")
     public ResponseEntity<List<String>> displayFeed(Authentication authentication){
-        String userId = "";
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof CustomUserPrincipal){
-            CustomUserPrincipal userPrincipal = (CustomUserPrincipal) principal;
-            if (userPrincipal.getUser() != null) {
-                userId = userPrincipal.getUser().getSpotify_id();
-            }
-        }
-        else if (principal instanceof OAuth2User) {
-
-            userId = ((OAuth2User) principal).getAttribute("id");
-        }
-        if (userId == null) {
-
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Could not retrieve user ID from authenticated principal.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.emptyList());
-        }
-
-        Users userid = userService.getUser(userId).orElse(null);
-        if (userid == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        Users userid = spotifyService.getUser(authentication);
         List<String> feedPlaylist = playlistService.getUserFeed(userid, 2);
         System.out.println(feedPlaylist);
         return ResponseEntity.ok(feedPlaylist);
 
     }
+
+//    @PostMapping("/addTrack")
+//    public ResponseEntity<String> addTrack(Authentication authentication){
+//
+//    }
 
 
 }

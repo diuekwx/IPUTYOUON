@@ -66,6 +66,15 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
+  gap: 25px;
+  height: 43vh;
+}
+
+.homepage-buttons div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
   height: 43vh;
 }
 

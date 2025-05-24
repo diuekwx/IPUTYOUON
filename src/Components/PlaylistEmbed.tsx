@@ -1,3 +1,6 @@
+
+import './PlaylistEmbed.css';
+
 interface PlaylistEmbedProps {
     listOfPlaylist: string[]; // ✔️ use lowercase string[]
 }
@@ -7,7 +10,7 @@ export default function PlaylistEmbed({ listOfPlaylist }: PlaylistEmbedProps) {
     console.log(listOfPlaylist)
     return (
 
-        <div>
+        <div className="playlist-embeds">
             {listOfPlaylist.map((playlist: string, index: number) => (
                 <iframe
                     key={index}

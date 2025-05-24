@@ -7,6 +7,7 @@ import LandingPage from './Components/LandingPage';
 import UserHome from './Components/UserHome';
 import Feed from './Components/Feed';
 import PlaylistCreation from './Components/PlaylistCreation';
+import UserPlaylists from './Components/UserPlaylists';
 
 const router = createBrowserRouter([
   {
@@ -14,16 +15,20 @@ const router = createBrowserRouter([
     element: <LandingPage />
   },
   {
-    path:'Home',
-    element: <UserHome/>
+    path: 'Home',
+    element: <UserHome />
   },
   {
-    path:'Feed',
-    element: <Feed/>
+    path: 'Feed',
+    element: <Feed />
   },
   {
-  path: 'playlist-creation',
-  element: <PlaylistCreation />
+    path: 'PlaylistCreation',
+    element: <PlaylistCreation />
+  },
+  {
+    path: 'UserPlaylists',
+    element: <UserPlaylists />
   }
 ]);
 

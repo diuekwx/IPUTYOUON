@@ -12,30 +12,33 @@ export default function UserHome() {
     const [showPlaylist, setShowPlaylist] = useState(false);
     const [playListLink, setplayListLink] = useState([]);
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         const res = await fetch("http://127.0.0.1:8080/api/me", {
-    //             credentials: "include",
-    //         });
-    //         console.log("hello")
-    //         if (res.ok) {
-    //             const data = await res.text(); // or .json() if you return JSON
-    //             console.log("User is logged in!", data);
-    //         } else {
-    //             console.log("Not logged in");
-    //         }
-    //     };
-
-    //     fetchUser();
-    // }, []);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
+        const fetchUser = async () => {
+            const res = await fetch("http://127.0.0.1:8080/api/spotify/me", {
+                credentials: "include",
+            });
 
-        const fetchPlaylist = async () => {
+            if (res.ok) {
+                setLoggedIn(true);
+                const data = await res.text();
+                console.log("User is logged in", data);
+            } else {
+                setLoggedIn(false);
+                console.log("User is not logged in");
+            }
+        };
 
-        }
-    })
+        fetchUser();
+    }, []);
+
+    // useEffect(() => {
+
+    //     const fetchPlaylist = async () => {
+
+    //     }
+    // })
 
     // get user playlist on load, if empty then display "empty" text, otherwise display the playlist
     // returns a list of playlists
@@ -67,10 +70,6 @@ export default function UserHome() {
 
     // }
 
-    const feed = () => {
-        navigate('/feed');
-    };
-
     return (
         <>
             <img src={cd_disk} className="cd-spin"></img>
@@ -79,18 +78,28 @@ export default function UserHome() {
                 <div className="homepage-buttons">
                     <p> <br></br>tired of ur bum ass friends and their sh*t music?<br></br>
                         let itnernet strangers who indludge in the msot obscure genres put you on!@!!</p>
-                    <button className="button1" onClick={() => getUserPlaylist()}>YOUR PLAYLISTS</button>
-                    <button className="button2" onClick={() => navigate('/playlist-creation')}>CREATE NEW PLAYLIST</button>
-                    {/*
-                    <button className="button2" onClick={() => setShowCreation(true)}>CREATE NEW PLAYLIST</button>
-                    {showCreation ? <PlaylistCreation/> : null}
-                    {/* <button onClick={() => clearBtn()}>Clear</button> (THIS WAS ALSO A COMMENT)/}
-                    {showPlaylist ? <PlaylistEmbed listOfPlaylist={playListLink}/> : null}
-                    COMMENTED OUT BC THIS WAS THE OLD PLAYLIST CREATION BUTTON, DONT KNOW IF ITS IMPORTANT*/}
-                    <button className="button3" onClick={() => feed()}>COMMUNITY FEED</button>
+
+                    {loggedIn ? (
+                        <div>
+                            {/*<button className="button1" onClick={() => getUserPlaylist()}>YOUR PLAYLISTS</button>*/}
+                            <button className="button1" onClick={() => navigate('/UserPlaylists')}>YOUR PLAYLISTS</button>
+                            <button className="button2" onClick={() => navigate('/PlaylistCreation')}>CREATE NEW PLAYLIST</button>
+                            {/*
+                            <button className="button2" onClick={() => setShowCreation(true)}>CREATE NEW PLAYLIST</button>
+                            {showCreation ? <PlaylistCreation/> : null}
+                            {/* <button onClick={() => clearBtn()}>Clear</button> (THIS WAS ALSO A COMMENT)/}
+                            {showPlaylist ? <PlaylistEmbed listOfPlaylist={playListLink}/> : null}
+                            COMMENTED OUT BC THIS WAS THE OLD PLAYLIST CREATION BUTTON, DONT KNOW IF ITS IMPORTANT
+                            */}
+                            <button className="button3" onClick={() => navigate('/Feed')}>COMMUNITY FEED</button>
+                        </div>
+                    ) : (
+                        <button className="login-button" onClick={() => window.location.href = 'http://127.0.0.1:8080/oauth2/authorization/spotify'}
+                        >Log In<img src={spotify_logo} width="30px"></img></button>
+                    )}
                 </div>
             </div>
-            <button className="login-button">Log In<img src={spotify_logo} width="30px"></img></button>
+
         </>
 
     )

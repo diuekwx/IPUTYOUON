@@ -44,7 +44,12 @@ public class PlaylistService {
         return playlistRepo.getRandomFeed(user, indexes);
     }
 
-    public Playlist savePlaylist(Playlist playlist) {
+    public Playlist savePlaylist(Users userid, String name, String desc, String playlistId) {
+        Playlist playlist = new Playlist();
+        playlist.setUserOwner(userid);
+        playlist.setPlaylistName(name);
+        playlist.setDescription(desc);
+        playlist.setSpotifyPlaylistId(playlistId);
         return playlistRepo.save(playlist);
     }
 

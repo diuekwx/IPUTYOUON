@@ -14,6 +14,7 @@ import spotify.recommender.CustomUserPrincipal;
 import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Repository.PlaylistRepo;
+import spotify.recommender.Repository.TrackSuggestionRepo;
 import spotify.recommender.Repository.UserRepo;
 
 import java.util.*;
@@ -33,13 +34,16 @@ public class SpotifyService {
 
     private final UserService userService;
 
+    private final TrackSuggestionService trackSuggestionService;
+
     @Autowired
-    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo, UserService userService){
+    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo, UserService userService, TrackSuggestionService trackSuggestionService){
         this.userRepo = userRepo;
         this.authService = authService;
         this.playlistService = playlistService;
         this.playlistRepo = playlistRepo;
         this.userService = userService;
+        this.trackSuggestionService = trackSuggestionService;
     }
 
     // track Id returns
@@ -93,30 +97,49 @@ public class SpotifyService {
         }
     }
 
-
+    // owner of the playlist will be adding it, might need to use their refresh token.
+    // get rid of recursion probably lol... also check if spotify:track: is prepended for the uris
     public void addTrackToPlaylist(Users user, String playlistId, String trackUri){
-        String accessToken = user.getAccessToken();
-
+        Playlist p = playlistRepo.findBySpotifyPlaylistId(playlistId);
+        System.out.println(p);
+        Users ownerOfPlaylist = p.getUserOwner();
+        System.out.println("Owner: "+ ownerOfPlaylist);
+        String accessToken = ownerOfPlaylist.getAccessToken();
+        System.out.println("access:  "+ accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
+//        String uri = trackUri.startsWith("spotify:track:") ? trackUri : "spotify:track:" + trackUri;
+        System.out.println("track uri" + trackUri);
 
+        //ex {"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh"]}
         Map<String, Object> data = new HashMap<>();
         data.put("uris", Collections.singletonList(trackUri));
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(data, headers);
-
+        System.out.println(data);
+        RestTemplate restTemplate = new RestTemplate();
         try{
-            RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForEntity(
                     "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks",
                     request,
                     Void.class
             );
+            trackSuggestionService.saveTrackSuggestion(user, trackUri, p);
+
         }
         catch (HttpClientErrorException.Unauthorized e){
-            String refreshed = authService.refreshAccessToken(user);
-            user.setAccessToken(refreshed);
-            addTrackToPlaylist(user, playlistId, trackUri);
+            System.out.println("refresheing");
+            String refreshed = authService.refreshAccessToken(ownerOfPlaylist);
+            ownerOfPlaylist.setAccessToken(refreshed);
+            userRepo.save(ownerOfPlaylist);
+            HttpHeaders newHeaders = new HttpHeaders();
+            newHeaders.setBearerAuth(refreshed);
+            newHeaders.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Map<String, Object>> retryRequest = new HttpEntity<>(data, newHeaders);
+            restTemplate.postForEntity("https://api.spotify.com/v1/playlists/" + playlistId + "/tracks", retryRequest, Void.class);
+            trackSuggestionService.saveTrackSuggestion(user, trackUri, p);
+
+//            addTrackToPlaylist(user, playlistId, trackUri);
         }
 
     }

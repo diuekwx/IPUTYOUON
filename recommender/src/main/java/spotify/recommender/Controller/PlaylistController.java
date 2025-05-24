@@ -4,11 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
-import spotify.recommender.CustomUserPrincipal;
 import spotify.recommender.Entities.Playlist;
-import spotify.recommender.Entities.TrackSuggestion;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Service.PlaylistService;
 import spotify.recommender.Service.SpotifyService;
@@ -69,12 +66,8 @@ public class PlaylistController {
         String name = playlistRequest.getName();
         String desc = playlistRequest.getDescription();
         String playlistId = spotifyService.createPlaylist(userid, name, desc);
-        Playlist playlist = new Playlist();
-        playlist.setSpotifyPlaylistId(playlistId);
-        playlist.setUserOwner(userid);
-        playlist.setPlaylistName(name);
-        playlist.setDescription(desc);
-        playlistService.savePlaylist(playlist);
+
+        Playlist playlist = playlistService.savePlaylist(userid, name, desc, playlistId);
 
         List<Playlist> userPlaylist = userid.getPlaylistList();
         userPlaylist.add(playlist);
@@ -112,19 +105,19 @@ public class PlaylistController {
         return ResponseEntity.ok(getTracks);
     }
 
-    //
+    //uhhh authentication necessary? since were using the other persons token anyway to add...
     @PostMapping("/{playListId}/add-tracks")
     public ResponseEntity<Void> addTracksToPlaylist(
-        @PathVariable String playlistId,
-        @RequestParam String userId,
-        @RequestBody String trackUris){
+            Authentication authentication,
+        @PathVariable String playListId,
+        @RequestBody String uris){
 
-        Users userid = userService.getUser(userId).orElse(null);
+        Users userid = spotifyService.getUser(authentication);
         if (userid == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-        spotifyService.addTrackToPlaylist(userid, playlistId, trackUris);
+        System.out.println(userid);
+        spotifyService.addTrackToPlaylist(userid, playListId, uris);
         return  ResponseEntity.ok().build();
 
     }

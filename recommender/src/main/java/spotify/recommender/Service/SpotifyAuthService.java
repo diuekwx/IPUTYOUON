@@ -107,7 +107,13 @@ public class SpotifyAuthService {
         ResponseEntity<Map> response = restTemplate.postForEntity("https://accounts.spotify.com/api/token", request, Map.class);
 
         String newAccessToken = (String) response.getBody().get("access_token");
+        Integer expiresIn = 3600;
+        Instant expiryTime = Instant.now().plusSeconds(expiresIn);
+
         user.setAccessToken(newAccessToken);
+        user.setTokenExpiry(expiryTime);
+        System.out.println("expiry time:" + expiryTime);
+
         userRepo.save(user);
 
         return newAccessToken;

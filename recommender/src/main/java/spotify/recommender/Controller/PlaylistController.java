@@ -5,10 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import spotify.recommender.DTO.ContributionDTO;
 import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Service.PlaylistService;
 import spotify.recommender.Service.SpotifyService;
+import spotify.recommender.Service.TrackSuggestionService;
 import spotify.recommender.Service.UserService;
 
 import java.util.*;
@@ -21,12 +23,14 @@ public class PlaylistController {
     private final PlaylistService playlistService;
     private final SpotifyService spotifyService;
     private final UserService userService;
+    private final TrackSuggestionService trackSuggestionService;
     private final String baseUrl = "https://api.spotify.com/v1/";
     @Autowired
-    public PlaylistController(PlaylistService playlistService, SpotifyService spotifyService, UserService userService){
+    public PlaylistController(PlaylistService playlistService, SpotifyService spotifyService, UserService userService, TrackSuggestionService trackSuggestionService){
         this.playlistService = playlistService;
         this.spotifyService = spotifyService;
         this.userService = userService;
+        this.trackSuggestionService = trackSuggestionService;
     }
 
 
@@ -50,6 +54,7 @@ public class PlaylistController {
         public String getQuery(){return query;};
         public void setQuery(String query){this.query = query; }
     }
+
     @PostMapping("/create")
     // Change return type to ResponseEntity<Map<String, String>> or a custom response object
     public ResponseEntity<Map<String, String>> createPlaylist(@RequestBody PlaylistRequest playlistRequest,
@@ -150,10 +155,19 @@ public class PlaylistController {
 
     @GetMapping("/feed")
     public ResponseEntity<List<String>> displayFeed(Authentication authentication){
+
         Users userid = spotifyService.getUser(authentication);
         List<String> feedPlaylist = playlistService.getUserFeed(userid, 2);
         System.out.println(feedPlaylist);
         return ResponseEntity.ok(feedPlaylist);
+
+    }
+
+    @GetMapping("/{playListId}/contributors")
+    public ResponseEntity< List<ContributionDTO>> displayContributors(Authentication authentication, @PathVariable String playListId){
+        Users userid = spotifyService.getUser(authentication);
+        List<ContributionDTO> contributors = trackSuggestionService.getContributors(playListId);
+        return ResponseEntity.ok(contributors);
 
     }
 

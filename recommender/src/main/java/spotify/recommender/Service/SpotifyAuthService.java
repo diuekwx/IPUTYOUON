@@ -1,6 +1,7 @@
 package spotify.recommender.Service;
 
 //import org.hibernate.mapping.Map;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.InstantSource;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Map;
@@ -89,6 +91,17 @@ public class SpotifyAuthService {
 
 
         return userRepo.save(user);
+    }
+
+    //wjenever using api call, extend expiry
+    public void checkExpiry(Users user){
+        System.out.println("Now:" + Instant.now());
+        System.out.println("user expiry:" + user.getTokenExpiry());
+        if (user.getTokenExpiry() == null || Instant.now().isAfter(user.getTokenExpiry())){
+            System.out.println("refreshing");
+            refreshAccessToken(user);
+        }
+
     }
 
     //refresh tokens

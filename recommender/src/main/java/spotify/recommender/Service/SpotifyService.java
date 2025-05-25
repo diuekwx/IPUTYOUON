@@ -278,6 +278,9 @@ public class SpotifyService {
         if (userid == null) {
             return null;
         }
+
+        authService.checkExpiry(userid);
+
         return userid;
     }
 

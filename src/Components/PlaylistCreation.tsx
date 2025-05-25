@@ -37,6 +37,10 @@ export default function PlaylistCreation() {
             console.log("Response status:", response.status);
             console.log("Response headers:", [...response.headers.entries()]);
 
+            // clear textarea inputs
+            setName('');
+            setDesc('');
+
             if (response.ok) {
                 const data = await response.json();
                 setStatus("Success! Playlist ID: " + data);
@@ -79,7 +83,7 @@ export default function PlaylistCreation() {
 
             <div>
                 <button onClick={createPlaylistz}>CREATE</button>
-                <p>Playlist will appear on username's account</p>
+                <p>{status}</p>
             </div>
 
 

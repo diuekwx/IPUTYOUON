@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import PlaylistEmbed from './PlaylistEmbed';
+import cd_disk from '../assets/cd.png';
+import './LoadingScreen.css';
 
 export default function UserPlaylists() {
     const [playlistIds, setPlaylistIds] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getUserPlaylist = async () => {
@@ -24,15 +27,32 @@ export default function UserPlaylists() {
                 }
             } catch (err) {
                 console.error("Failed to fetch playlists:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
         getUserPlaylist();
     }, []);
 
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <img src={cd_disk} className="loading-spin"></img>
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
     return (
         <div>
-            <h2>Your Playlists</h2>
+            <h2 style={{
+                color: 'white',
+                fontSize: '50px',
+                width: '100%',
+                textAlign: 'center',
+                lineHeight: '90px'
+            }}><b>Your Playlists</b></h2>
             {playlistIds.length > 0 ? (
                 <div>
                     <PlaylistEmbed listOfPlaylist={playlistIds} />

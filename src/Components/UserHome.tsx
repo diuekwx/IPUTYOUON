@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import cd_disk from '../assets/cd.png';
 import spotify_logo from '../assets/spotify-logo.png';
 import './UserHome.css';
+import './LoadingScreen.css';
 
 
 export default function UserHome() {
@@ -13,20 +14,28 @@ export default function UserHome() {
     const [playListLink, setplayListLink] = useState([]);
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await fetch("http://127.0.0.1:8080/api/spotify/me", {
-                credentials: "include",
-            });
+            try {
+                const res = await fetch("http://127.0.0.1:8080/api/spotify/me", {
+                    credentials: "include",
+                });
 
-            if (res.ok) {
-                setLoggedIn(true);
-                const data = await res.text();
-                console.log("User is logged in", data);
-            } else {
+                if (res.ok) {
+                    setLoggedIn(true);
+                    const data = await res.text();
+                    console.log("User is logged in", data);
+                } else {
+                    setLoggedIn(false);
+                    console.log("User is not logged in");
+                }
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
                 setLoggedIn(false);
-                console.log("User is not logged in");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -69,6 +78,16 @@ export default function UserHome() {
     //     console.log("Response status:", response.status);
 
     // }
+
+    // adds a little buffer time so the page properly loads
+    if (loading) {
+        return (
+            <div className="loading-screen">
+                <img src={cd_disk} className="loading-spin"></img>
+                <p>Loading...</p>
+            </div>
+        );
+    }
 
     return (
         <>

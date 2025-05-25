@@ -59,7 +59,7 @@ export default function PlaylistCreation() {
 
     return (
         <div className="playlist-creation">
-            <h1><b>Spotify Playlist Creation</b></h1>
+            <h1>Spotify Playlist Creation</h1>
 
             <div>
                 <textarea id="title"

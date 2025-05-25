@@ -100,21 +100,15 @@ export default function UserHome() {
 
                     {loggedIn ? (
                         <div>
-                            {/*<button className="button1" onClick={() => getUserPlaylist()}>YOUR PLAYLISTS</button>*/}
                             <button className="button1" onClick={() => navigate('/UserPlaylists')}>YOUR PLAYLISTS</button>
                             <button className="button2" onClick={() => navigate('/PlaylistCreation')}>CREATE NEW PLAYLIST</button>
-                            {/*
-                            <button className="button2" onClick={() => setShowCreation(true)}>CREATE NEW PLAYLIST</button>
-                            {showCreation ? <PlaylistCreation/> : null}
-                            {/* <button onClick={() => clearBtn()}>Clear</button> (THIS WAS ALSO A COMMENT)/}
-                            {showPlaylist ? <PlaylistEmbed listOfPlaylist={playListLink}/> : null}
-                            COMMENTED OUT BC THIS WAS THE OLD PLAYLIST CREATION BUTTON, DONT KNOW IF ITS IMPORTANT
-                            */}
                             <button className="button3" onClick={() => navigate('/Feed')}>COMMUNITY FEED</button>
                         </div>
                     ) : (
-                        <button className="login-button" onClick={() => window.location.href = 'http://127.0.0.1:8080/oauth2/authorization/spotify'}
-                        >Log In<img src={spotify_logo} width="30px"></img></button>
+                        <div>
+                            <button className="login-button" onClick={() => window.location.href = 'http://127.0.0.1:8080/oauth2/authorization/spotify'}
+                            >Log In<img src={spotify_logo} width="30px"></img></button>
+                        </div>
                     )}
                 </div>
             </div>

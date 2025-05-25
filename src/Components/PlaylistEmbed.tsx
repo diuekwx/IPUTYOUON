@@ -12,9 +12,11 @@ export default function PlaylistEmbed({ listOfPlaylist }: PlaylistEmbedProps) {
             flexWrap: 'wrap',
             justifyContent: 'space-around',
             alignItems: 'flex-start',
+            width: '100vw',
             rowGap: '30px',
             paddingLeft: '10%',
-            paddingRight: '10%'
+            paddingRight: '10%',
+            paddingBottom: '5%'
         }}>
             {listOfPlaylist.map((playlist: string, index: number) => (
                 <iframe

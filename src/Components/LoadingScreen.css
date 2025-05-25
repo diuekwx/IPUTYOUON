@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'Spac3-halftone';
+    src: url('../assets/Spac3-halftone.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+h1 {
+  font-family: 'Spac3-halftone', sans-serif;
+}
+
 .loading-screen {
   display: flex;
   flex-direction: column;

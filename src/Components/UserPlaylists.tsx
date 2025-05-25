@@ -46,13 +46,13 @@ export default function UserPlaylists() {
 
     return (
         <div>
-            <h2 style={{
+            <h1 style={{
                 color: 'white',
                 fontSize: '50px',
                 width: '100%',
                 textAlign: 'center',
                 lineHeight: '90px'
-            }}><b>Your Playlists</b></h2>
+            }}><b>Your Playlists</b></h1>
             {playlistIds.length > 0 ? (
                 <div>
                     <PlaylistEmbed listOfPlaylist={playlistIds} />

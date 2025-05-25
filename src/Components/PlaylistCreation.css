@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'Spac3-halftone';
+    src: url('../assets/Spac3-halftone.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .playlist-creation {
     display: flex;
     flex-direction: column;
@@ -16,8 +23,9 @@
 }
 
 .playlist-creation h1 {
+    font-family: 'Spac3-halftone', sans-serif;
     color: white;
-    font-size: 40;
+    font-size: 60;
 }
 
 .playlist-creation button {

@@ -53,3 +53,8 @@ button {
     border-color: grey;
     cursor: default;
 }
+
+p {
+    font-size: 25px;
+    color: white;
+}

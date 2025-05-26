@@ -1,0 +1,55 @@
+h1 {
+    color: white;
+    font-size: 75px;
+}
+
+.feed-page {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    align-items: center;
+}
+
+.track-card {
+    display: flex;
+    gap: 3vw;
+}
+
+.playlist {
+    width: 40vw;
+    height: 75vh;
+}
+
+.feed-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+button {
+    border: 3px solid white;
+    background-color: transparent;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+}
+
+.blue-button:hover {
+    border-color: rgb(40, 148, 255);
+    color: rgb(40, 148, 255);
+}
+
+.pink-button:hover {
+    border-color: hotpink;
+    color: hotpink;
+}
+
+.disabled-button {
+    border-color: grey;
+    color: grey
+}
+
+.disabled-button:hover {
+    border-color: grey;
+    cursor: default;
+}

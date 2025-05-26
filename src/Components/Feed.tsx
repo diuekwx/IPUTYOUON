@@ -1,32 +1,32 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import Search from './Search';
+import './Feed.css';
 
-export default function Feed(){
+export default function Feed() {
     const [feed, setFeed] = useState([]);
-      const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
-      const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
-
+    const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
+    const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
 
     const addToPlaylist = async () => {
         console.log("using:", selectedPlaylist)
         const response = await fetch(`http://127.0.0.1:8080/api/playlist/${selectedPlaylist}/add-tracks`, {
-                credentials: "include",
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: selectedTrack,
-            });
+            credentials: "include",
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: selectedTrack,
+        });
 
         if (response.ok) {
             const data = await response.json();
             console.log("Added track to playlist:", data);
         }
     }
-      
+
     const url = `https://open.spotify.com/embed/playlist/`
     //continuiously add to array as they scroll ? 
-    const getFeed  = async () => {
+    const getFeed = async () => {
         const response = await fetch(`http://127.0.0.1:8080/api/playlist/feed`, {
             credentials: "include",
             method: 'GET',
@@ -35,10 +35,13 @@ export default function Feed(){
             },
         })
         console.log("Response status:", response.status);
-        if (response.ok){
+        if (response.ok) {
             const data = await response.json();
             setFeed(data);
             console.log("feed data", data);
+
+            // reset selected playlist to none
+            setSelectedPlaylist(null);
 
         }
     }
@@ -51,13 +54,11 @@ export default function Feed(){
                 'Content-Type': 'application/json'
             },
         });
-        if (response.ok){
+        if (response.ok) {
             const data = await response.json();
             console.log(data);
         }
-        
-        
-        
+
     }
 
     const handleSelect = (playlist: string) => {
@@ -66,34 +67,44 @@ export default function Feed(){
     }
     // retrieve some random playlist from the server and display it 
     // put all that shit in like a queue or something ...? maybe an array lol idk 
-    return(
+    return (
         <>
-        <Search setTrack={setSelectedTrack}></Search>
-        <button onClick={() => getFeed()}>test</button>
-        <div>
-            {feed.map((playlist: string, index: number) => (
-                <div key={index} className="track-card"> 
-                    <iframe
-                    key={index}
-                    style={{ borderRadius: "12px" }}
-                    src={url+ playlist}
-                    width="100%"
-                    height="380"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    title={`Spotify playlist ${index}`} 
-                >
-                
-                </iframe>
-                <button onClick={() => handleSelect(playlist)}>Recommend</button>
-                </div>
-                
-                
-            ))}
-        </div>
+            <div className="feed-page">
+                <h1>COMMUNITY FEED</h1>
+                <button onClick={() => getFeed()} className="blue-button">Refresh</button>
+                {feed.map((playlist: string, index: number) => (
+                    <div key={index} className="track-card">
+                        <iframe
+                            key={index}
+                            style={{ borderRadius: "12px" }}
+                            src={url + playlist}
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"
+                            title={`Spotify playlist ${index}`}
+                            className="playlist"
+                        ></iframe>
+                        <div className="feed-buttons">
 
-        <button onClick={() => addToPlaylist()}>Add to Playlist</button>
-        <button onClick={() => getContributors()}>Get Contributors</button>
+                            {selectedPlaylist === playlist ? (
+                                <div>
+                                    <Search setTrack={setSelectedTrack} />
+                                    <button onClick={() => addToPlaylist()}
+                                        className={selectedTrack ? "pink-button" : "disabled-button"}
+                                        disabled={!selectedTrack}
+                                    >Recommend Selected Song</button>
+                                    <button onClick={() => getContributors()} className="pink-button">Get Contributors</button>
+                                </div>
+                            ) : (
+                                <button onClick={() => handleSelect(playlist)} className="pink-button">Add to this Playlist</button>
+                            )}
+                        </div>
+                    </div>
+
+
+                ))}
+            </div>
+
+
         </>
     )
 }

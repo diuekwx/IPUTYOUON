@@ -1,0 +1,21 @@
+input {
+    display: flex;
+    flex-direction: column;
+    resize: none;
+    border: none;
+    border-bottom: 3px solid white;
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    width: 30vw;
+}
+
+.suggestion-card {
+    display: flex;
+    width: 30vw;
+}
+
+.green-button:hover {
+    border-color: greenyellow;
+    color: greenyellow;
+}

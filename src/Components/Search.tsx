@@ -1,4 +1,5 @@
 import { useState, ChangeEvent } from 'react';
+import './Search.css';
 
 interface SearchProps {
   setTrack: React.Dispatch<React.SetStateAction<string | null>>;
@@ -7,10 +8,11 @@ interface SearchProps {
 export default function Search({setTrack}: SearchProps) {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
-  // const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
+  const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
 
 const handleSelect = (track: string) => {
   setTrack("spotify:track:" + track);
+  setSelectedTrack(track);
 };
 
     const url = `https://open.spotify.com/embed/track/`
@@ -52,7 +54,7 @@ const handleSelect = (track: string) => {
     <>
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="search for a song to recommend..."
         value={searchTerm}
         onChange={handleSearch}
       />
@@ -71,15 +73,16 @@ const handleSelect = (track: string) => {
             ))} */}
             {
             searchResults.map((link: string, index: number) => (
-                <div key={index} className="track-card">
+                <div key={index} className="suggestion-card">
                 <iframe
                     src={url + link}
-                    width="300"
+                    width="400"
                     height="80"
 
                     allow="encrypted-media"
+                    className="song-searches"
                 ></iframe>
-                <button onClick={() => handleSelect(link)}>Recommend</button>
+                <button onClick={() => handleSelect(link)} className="green-button">{selectedTrack === link ? "Selected" : "Select"}</button>
                 </div>
             ))
             }

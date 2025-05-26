@@ -78,7 +78,7 @@ body {
 .homepage-buttons button {
   width: 30vw;
   border: 3px solid white;
-  background-color: black;
+  background-color: transparent;
   border-radius: 8px;
   color: white;
   font-size: 18px;

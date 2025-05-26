@@ -27,6 +27,9 @@ public class Users {
     @OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Playlist> playlistList;
 
+    @Column(name = "display_name")
+    private String displayName;
+
     public Users() {
 
     }
@@ -35,13 +38,22 @@ public class Users {
         this.spotifyId = spotifyId;
     }
 
-    public Users(Long key, String spotify_id, String accessToken, String refreshToken, Instant tokenExpiry, List<Playlist> playlist) {
+    public Users(Long key, String spotify_id, String accessToken, String refreshToken, Instant tokenExpiry, List<Playlist> playlist, String displayName) {
         this.id = key;
         this.spotifyId = spotify_id;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.tokenExpiry = tokenExpiry;
         this.playlistList = playlist;
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public Long getId() {

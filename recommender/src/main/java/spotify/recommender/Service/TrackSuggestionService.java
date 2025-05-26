@@ -64,7 +64,7 @@ public class TrackSuggestionService {
 
         for (TrackSuggestion track : alltrackSuggestions) {
             Users user = userRepo.getReferenceById(track.getUser().getId());
-            String username = user.getSpotify_id();
+            String username = user.getDisplayName();
             String trackUri = track.getTrackUri().replace("spotify:track:", "");
 
             String artistName = spotifyTrackService.getArtistName(user, trackUri);

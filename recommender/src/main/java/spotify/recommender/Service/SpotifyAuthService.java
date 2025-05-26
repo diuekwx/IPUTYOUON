@@ -5,6 +5,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,10 +37,17 @@ public class SpotifyAuthService {
     private String redirectUri;
 
     private final UserRepo userRepo;
+    private final UserService userService;
+    private final EncryptionService encryptionService;
+
+
     @Autowired
-    public SpotifyAuthService(UserRepo userRepo){
+    public SpotifyAuthService(UserRepo userRepo, UserService userService, EncryptionService encryptionService){
         this.userRepo = userRepo;
+        this.userService = userService;
+        this.encryptionService = encryptionService;
     }
+
 
 
     //requesting access token
@@ -84,10 +93,14 @@ public class SpotifyAuthService {
         // Save or update user in database
         Users user = userRepo.findBySpotifyId(spotifyId)
                 .orElse(new Users());
+
+
         user.setSpotify_id(spotifyId);
         user.setAccessToken(accessToken);
         user.setRefreshToken(refreshToken);
         user.setTokenExpiry(tokenExpiry);
+
+
 
 
         return userRepo.save(user);
@@ -113,17 +126,32 @@ public class SpotifyAuthService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "refresh_token");
-        body.add("refresh_token", user.getRefreshToken());
+        try{
+            String decryptedRefresh = encryptionService.decrypt(user.getRefreshToken());
+            body.add("refresh_token", decryptedRefresh);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
 
+        //send decrypted refresh token to token endpoint, spotify verifies and then grants new access token
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Map> response = restTemplate.postForEntity("https://accounts.spotify.com/api/token", request, Map.class);
 
         String newAccessToken = (String) response.getBody().get("access_token");
+
+        String encrypted;
+        try{
+            encrypted = encryptionService.encrypted(newAccessToken);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
         Integer expiresIn = 3600;
         Instant expiryTime = Instant.now().plusSeconds(expiresIn);
 
-        user.setAccessToken(newAccessToken);
+        user.setAccessToken(encrypted);
         user.setTokenExpiry(expiryTime);
         System.out.println("expiry time:" + expiryTime);
 

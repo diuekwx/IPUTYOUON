@@ -1,5 +1,7 @@
 package spotify.recommender.Service;
 
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -24,10 +26,17 @@ import java.time.Instant;
 public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepo userRepository;
+    private final UserService userService;
+    private final EncryptionService encryptionService;
 
-    public CustomOAuth2Service(UserRepo userRepository) {
+
+
+    public CustomOAuth2Service(UserRepo userRepository, UserService userService, EncryptionService encryptionService) {
         this.userRepository = userRepository;
+        this.userService = userService;
+        this.encryptionService = encryptionService;
     }
+
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest request) throws OAuth2AuthenticationException {
@@ -38,18 +47,28 @@ public class CustomOAuth2Service implements OAuth2UserService<OAuth2UserRequest,
         String displayName = oauth2User.getAttribute("display_name"); // This is the display name
         String accessToken = request.getAccessToken().getTokenValue();
 
+        String encrypted = encryptionService.encryptSafe(accessToken);
+//        try {
+//            encrypted = encryptionService.encrypted(accessToken);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Encryption failed", e);
+//        }
+
 
         Users user = userRepository.findBySpotifyId(spotifyId).orElse(null);
 
         if (user == null) {
-
             user = new Users();
             user.setSpotify_id(spotifyId);
 
-        }
 
+        }
+        user.setAccessToken(encrypted);
+        // can change
+        user.setDisplayName(displayName);
         // update the access token  might have been refreshed
-        user.setAccessToken(accessToken);
+
 
         // Get token expiry (available on OAuth2AccessToken)
         Instant tokenExpiry = request.getAccessToken().getExpiresAt();

@@ -1,16 +1,20 @@
 package spotify.recommender.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import spotify.recommender.CustomUserPrincipal;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Repository.UserRepo;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,11 +22,13 @@ public class UserService {
 
     private UserRepo userRepo;
     private final OAuth2AuthorizedClientService authorizedClientService;
+    private final EncryptionService encryptionService;
 
     @Autowired
-    public UserService(UserRepo userRepo, OAuth2AuthorizedClientService authorizedClient){
+    public UserService(UserRepo userRepo, OAuth2AuthorizedClientService authorizedClient, EncryptionService encryptionService){
         this.userRepo = userRepo;
         this.authorizedClientService = authorizedClient;
+        this.encryptionService = encryptionService;
     }
 
     public Users createUsers(Users user){
@@ -34,7 +40,7 @@ public class UserService {
     }
 
     public void saveOrUpdateWithTokens(Authentication auth, String clientRegistration){
-        System.out.println("actiavtion");
+
         Object principal = auth.getPrincipal();
         String principalName = null;
 
@@ -61,17 +67,18 @@ public class UserService {
         );
 
         if (authorizedClient != null) {
-            // Now you have the authorized client, you can access the tokens
+            // access tokens in authorized client
             String accessTokenValue = authorizedClient.getAccessToken().getTokenValue();
-            Instant accessTokenExpiry = authorizedClient.getAccessToken().getExpiresAt();
-            OAuth2RefreshToken refreshToken = authorizedClient.getRefreshToken(); // Get the refresh token object
+            String encryptedAccessToken = encryptionService.encryptSafe(accessTokenValue);
 
-            // Get the refresh token string value if the refresh token exists
-            String refreshTokenValue = (refreshToken != null) ? refreshToken.getTokenValue() : null;
-            System.out.println(refreshTokenValue);
-            // Update your Users entity with the token information
+            Instant accessTokenExpiry = authorizedClient.getAccessToken().getExpiresAt();
+
+            OAuth2RefreshToken refreshToken = authorizedClient.getRefreshToken();
+
+            String refreshTokenValue = (refreshToken != null) ? encryptionService.encryptSafe(refreshToken.getTokenValue()) : null;
+
             if (user != null) {
-                user.setAccessToken(accessTokenValue);
+                user.setAccessToken(encryptedAccessToken);
                 user.setTokenExpiry(accessTokenExpiry);
                 user.setRefreshToken(refreshTokenValue); // Save the refresh token string
 
@@ -83,9 +90,37 @@ public class UserService {
 
         } else {
             System.err.println("OAuth2AuthorizedClient not found for principal: " + principalName + " and client: " + clientRegistration);
-            // This might happen if the authorization failed or wasn't completed correctly
+            //  might happen if the authorization failed or wasn't completed correctly
         }
 
+    }
+
+    //fallback for oauth2 not getting it
+    public String getDisplayName(Users user){
+        String accessToken = user.getAccessToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        try{
+            ResponseEntity<Map> response = new RestTemplate().exchange(
+                    "https://api.spotify.com/v1/me",
+                    HttpMethod.GET,
+                    request,
+                    Map.class
+            );
+            Map<String, Object> res = response.getBody();
+            Object name = res.get("display_name");
+            if (name != null && name instanceof String){
+                return (String) name;
+            }
+
+        }
+        catch (HttpClientErrorException e){
+            return null;
+        }
+        return null;
     }
 
 

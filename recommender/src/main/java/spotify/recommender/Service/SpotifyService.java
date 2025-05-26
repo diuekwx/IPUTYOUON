@@ -17,6 +17,7 @@ import spotify.recommender.Repository.PlaylistRepo;
 import spotify.recommender.Repository.TrackSuggestionRepo;
 import spotify.recommender.Repository.UserRepo;
 
+import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,21 +37,37 @@ public class SpotifyService {
 
     private final TrackSuggestionService trackSuggestionService;
 
+    private final EncryptionService encryptionService;
+
     @Autowired
-    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo, UserService userService, TrackSuggestionService trackSuggestionService){
+    public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo, UserService userService,
+                          TrackSuggestionService trackSuggestionService, EncryptionService encryptionService){
         this.userRepo = userRepo;
         this.authService = authService;
         this.playlistService = playlistService;
         this.playlistRepo = playlistRepo;
         this.userService = userService;
         this.trackSuggestionService = trackSuggestionService;
+        this.encryptionService = encryptionService;
     }
+
+    public String decryptedAccessToken(Users user) {
+        return encryptionService.decryptSafe(user.getAccessToken());
+    }
+
 
     // track Id returns
     //fix returns lol
     public List<String> searchTrack(Users user, String query){
-        String accessToken = user.getAccessToken();
-        System.out.println("accesstoken" + accessToken);
+//        String accessToken = user.getAccessToken();
+//        try {
+//            String decrypted = encryptionService.decrypt(accessToken);
+//        }
+//        catch (Exception e){
+//            throw new RuntimeException("Bad token");
+//        }
+        String accessToken = decryptedAccessToken(user);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
@@ -104,7 +121,8 @@ public class SpotifyService {
         System.out.println(p);
         Users ownerOfPlaylist = p.getUserOwner();
         System.out.println("Owner: "+ ownerOfPlaylist);
-        String accessToken = ownerOfPlaylist.getAccessToken();
+//        String accessToken = ownerOfPlaylist.getAccessToken();
+        String accessToken = decryptedAccessToken(ownerOfPlaylist);
         System.out.println("access:  "+ accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
@@ -149,7 +167,7 @@ public class SpotifyService {
     // should return a list of playlists maybe? how to do ?
     public Object getAllPlaylists(Users user){
         RestTemplate restTemplate = new RestTemplate();
-        String accessToken = user.getAccessToken();
+        String accessToken = decryptedAccessToken(user);
          HttpHeaders headers = new HttpHeaders();
          headers.setBearerAuth(accessToken);
          String userId = user.getSpotify_id();
@@ -171,7 +189,7 @@ public class SpotifyService {
         List<Playlist> userPlaylist = playlistService.getUsersPlaylist(user);
         System.out.println(userPlaylist);
         RestTemplate restTemplate = new RestTemplate();
-        String accessToken = user.getAccessToken();
+        String accessToken = decryptedAccessToken(user);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
@@ -224,7 +242,7 @@ public class SpotifyService {
 
     //consider visibility
     public String createPlaylist(Users user, String name, String description){
-        String accessToken = user.getAccessToken();
+        String accessToken = decryptedAccessToken(user);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);

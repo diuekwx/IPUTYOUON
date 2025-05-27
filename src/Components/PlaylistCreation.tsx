@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './PlaylistCreation.css';
+import HomeButton from './HomeButton.tsx';
 
 export default function PlaylistCreation() {
     const [status, setStatus] = useState<string>("");
@@ -86,8 +87,7 @@ export default function PlaylistCreation() {
                 <p>{status}</p>
             </div>
 
-
-            <button className="cancel" onClick={() => navigate('/Home')}><b>X</b></button>
+            <HomeButton />
 
         </div>
     );

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import PlaylistEmbed from './PlaylistEmbed';
 import cd_disk from '../assets/cd.png';
 import './LoadingScreen.css';
+import HomeButton from './HomeButton.tsx';
 
 export default function UserPlaylists() {
     const [playlistIds, setPlaylistIds] = useState([]);
@@ -60,6 +61,8 @@ export default function UserPlaylists() {
             ) : (
                 <p>No playlists found.</p>
             )}
+            
+            <HomeButton />
         </div>
     );
 }

@@ -3,7 +3,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import LandingPage from './Components/LandingPage';
 import UserHome from './Components/UserHome';
 import Feed from './Components/Feed';
 import PlaylistCreation from './Components/PlaylistCreation';
@@ -12,10 +11,6 @@ import UserPlaylists from './Components/UserPlaylists';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingPage />
-  },
-  {
-    path: 'Home',
     element: <UserHome />
   },
   {

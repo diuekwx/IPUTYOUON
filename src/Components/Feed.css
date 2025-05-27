@@ -30,7 +30,7 @@
     animation: slideInUp 0.5s forwards;
 }
 
-h1 {
+.feed-page h1 {
     color: white;
     font-size: 75px;
     position: fixed;

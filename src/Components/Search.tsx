@@ -54,7 +54,7 @@ const handleSelect = (track: string) => {
     <>
       <input
         type="text"
-        placeholder="search for a song to recommend..."
+        placeholder="🔍 search for a song to recommend..."
         value={searchTerm}
         onChange={handleSearch}
       />

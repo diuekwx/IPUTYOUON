@@ -1,6 +1,4 @@
-import { useState, useEffect, use } from 'react'
-import PlaylistCreation from './PlaylistCreation';
-import PlaylistEmbed from './PlaylistEmbed';
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import cd_disk from '../assets/cd.png';
 import spotify_logo from '../assets/spotify-logo.png';
@@ -9,9 +7,6 @@ import './LoadingScreen.css';
 
 
 export default function UserHome() {
-    const [showCreation, setShowCreation] = useState(false);
-    const [showPlaylist, setShowPlaylist] = useState(false);
-    const [playListLink, setplayListLink] = useState([]);
     const navigate = useNavigate();
     const [loggedIn, setLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -41,43 +36,6 @@ export default function UserHome() {
 
         fetchUser();
     }, []);
-
-    // useEffect(() => {
-
-    //     const fetchPlaylist = async () => {
-
-    //     }
-    // })
-
-    // get user playlist on load, if empty then display "empty" text, otherwise display the playlist
-    // returns a list of playlists
-    const getUserPlaylist = async () => {
-        const response = await fetch('http://127.0.0.1:8080/api/playlist/get-user-playlist', {
-            credentials: "include",
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        console.log("Response status:", response.status);
-        if (response.ok) {
-            setShowPlaylist(true);
-            const data = await response.json();
-            setplayListLink(data);
-        }
-    };
-    // this was for testing purposes
-    // const clearBtn = async () => {
-    //     const response = await fetch('http://127.0.0.1:8080/api/playlist/clear', {
-    //             credentials: "include",
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-    //     console.log("Response status:", response.status);
-
-    // }
 
     // adds a little buffer time so the page properly loads
     if (loading) {

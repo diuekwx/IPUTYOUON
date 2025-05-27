@@ -10,6 +10,10 @@ input {
     width: 30vw;
 }
 
+input:focus {
+    outline: none;
+}
+
 .suggestion-card {
     display: flex;
     width: 30vw;

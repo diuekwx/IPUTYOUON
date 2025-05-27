@@ -30,7 +30,7 @@ export default function Feed() {
     }
 
     const url = `https://open.spotify.com/embed/playlist/`
-    
+
     const getFeed = async () => {
         const response = await fetch(`http://127.0.0.1:8080/api/playlist/feed`, {
             credentials: "include",
@@ -64,7 +64,6 @@ export default function Feed() {
     const handleAnimationEnd = () => {
         if (animationState === 'out') {
             setSelectedPlaylist(nextPlaylist);
-            setNextPlaylist(null);
             setAnimationState('in');
         } else if (animationState === 'in') {
             setAnimationState('idle');
@@ -87,35 +86,34 @@ export default function Feed() {
 
     }
 
-
-    // retrieve some random playlist from the server and display it
-    // put all that shit in like a queue or something ...? maybe an array lol idk
     return (
         <>
             <div className="feed-page">
                 <h1>COMMUNITY FEED</h1>
+
                 {selectedPlaylist ? (
                     <div className="track-card">
                         <div className="feed-left">
-                            <div className={`
-                                    ${animationState === 'out' ? (
-                                        'slide-out' 
-                                    ) : ( animationState === 'in' ? (
-                                        'slide-in' 
-                                    ) : ( '' ))}`}
+                            <iframe
+                                className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'idle' ? '' : 'hidden'}`}
                                 onAnimationEnd={handleAnimationEnd}
-                            >
-                                <iframe
-                                    style={{ borderRadius: "12px" }}
-                                    src={url + selectedPlaylist}
-                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                    loading="lazy"
-                                    title={`Selected Spotify playlist`}
-                                    className="playlist"
-                                ></iframe>
-                            </div>
-                            <button onClick={() => getFeed()} className="blue-button">Refresh</button>
+                                style={{ borderRadius: "12px" }}
+                                src={url + selectedPlaylist}
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"
+                                title="Current/ Selected Playlist"
+                            ></iframe>
 
+                            <iframe
+                                className={`playlist ${animationState === 'in' ? 'slide-in' : 'hidden'}`}
+                                onAnimationEnd={handleAnimationEnd}
+                                style={{ borderRadius: "12px" }}
+                                src={url + nextPlaylist}
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"
+                                title="Next Playlist"
+                            ></iframe>
+                            <button onClick={getFeed} className="blue-button">Refresh</button>
                         </div>
 
                         <div className="feed-right">
@@ -130,17 +128,38 @@ export default function Feed() {
                                 Get Contributors
                             </button>
                         </div>
-
-
                     </div>
-
 
                 ) : (
-                    <div>
-                        <p>Oops, an error occurred. Try refreshing again!</p>
-                        <button onClick={() => getFeed()} className="blue-button">Refresh</button>
+                    <div className="track-card">
+                        <div className="feed-left">
+                            <div className="error-box"><p>Oops, an error occurred. Try refreshing again!</p></div>
+                            <button onClick={() => getFeed()} className="blue-button">Refresh</button>
+                        </div>
+
+                        <div className="feed-right">
+                            <Search setTrack={setSelectedTrack} />
+                            <button onClick={() => addToPlaylist()}
+                                className={selectedTrack ? "pink-button" : "disabled-button"}
+                                disabled={!selectedTrack}
+                            >
+                                Recommend Selected Song
+                            </button>
+                            <button onClick={() => getContributors()} className="disabled-button">
+                                Get Contributors
+                            </button>
+                        </div>
                     </div>
                 )}
+
+
+
+
+
+
+
+
+
             </div>
         </>
     )

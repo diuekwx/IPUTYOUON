@@ -120,6 +120,7 @@ public class SpotifyAuthService {
     //refresh tokens
     public String refreshAccessToken(Users user) {
         HttpHeaders headers = new HttpHeaders();
+        System.out.println(user);
         String creds = clientId + ":" + clientSecret;
         headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString(creds.getBytes()));
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -128,6 +129,7 @@ public class SpotifyAuthService {
         body.add("grant_type", "refresh_token");
         try{
             String decryptedRefresh = encryptionService.decrypt(user.getRefreshToken());
+            System.out.println("decryped");
             body.add("refresh_token", decryptedRefresh);
         }
         catch (Exception e){
@@ -143,6 +145,7 @@ public class SpotifyAuthService {
 
         String encrypted;
         try{
+            System.out.println("encrypting new accesstoken");
             encrypted = encryptionService.encrypted(newAccessToken);
         }
         catch (Exception e){

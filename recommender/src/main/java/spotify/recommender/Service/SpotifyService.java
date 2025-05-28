@@ -11,6 +11,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import spotify.recommender.CustomUserPrincipal;
+import spotify.recommender.DTO.ContributionDTO;
+import spotify.recommender.DTO.SpotifyDTO;
 import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
 import spotify.recommender.Repository.PlaylistRepo;
@@ -37,11 +39,13 @@ public class SpotifyService {
 
     private final TrackSuggestionService trackSuggestionService;
 
+    private final SpotifyTrackService spotifyTrackService;
+
     private final EncryptionService encryptionService;
 
     @Autowired
     public SpotifyService(UserRepo userRepo, SpotifyAuthService authService, PlaylistService playlistService, PlaylistRepo playlistRepo, UserService userService,
-                          TrackSuggestionService trackSuggestionService, EncryptionService encryptionService){
+                          TrackSuggestionService trackSuggestionService, EncryptionService encryptionService, SpotifyTrackService spotifyTrackService){
         this.userRepo = userRepo;
         this.authService = authService;
         this.playlistService = playlistService;
@@ -49,6 +53,7 @@ public class SpotifyService {
         this.userService = userService;
         this.trackSuggestionService = trackSuggestionService;
         this.encryptionService = encryptionService;
+        this.spotifyTrackService = spotifyTrackService;
     }
 
     public String decryptedAccessToken(Users user) {
@@ -120,15 +125,16 @@ public class SpotifyService {
         Playlist p = playlistRepo.findBySpotifyPlaylistId(playlistId);
         System.out.println(p);
         Users ownerOfPlaylist = p.getUserOwner();
-        System.out.println("Owner: "+ ownerOfPlaylist);
-//        String accessToken = ownerOfPlaylist.getAccessToken();
+
+        System.out.println("BEFOREHAND");
+        System.out.println("ownerofplaylist" + ownerOfPlaylist);
+        authService.checkExpiry(ownerOfPlaylist);
         String accessToken = decryptedAccessToken(ownerOfPlaylist);
-        System.out.println("access:  "+ accessToken);
+        System.out.println("access token of Owner: " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 //        String uri = trackUri.startsWith("spotify:track:") ? trackUri : "spotify:track:" + trackUri;
-        System.out.println("track uri" + trackUri);
 
         //ex {"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh"]}
         Map<String, Object> data = new HashMap<>();
@@ -142,11 +148,14 @@ public class SpotifyService {
                     request,
                     Void.class
             );
-            trackSuggestionService.saveTrackSuggestion(user, trackUri, p);
-
+            String altered = trackUri.replace("spotify:track:", "");
+            SpotifyDTO spotifyDTO = spotifyTrackService.getSongAndArtistName(ownerOfPlaylist, altered);
+            trackSuggestionService.saveTrackSuggestion(user, trackUri, p, spotifyDTO.getArtist(), spotifyDTO.getSongName());
+            System.out.println("request went through");
         }
         catch (HttpClientErrorException.Unauthorized e){
-            System.out.println("refresheing");
+//        catch (Exception e){
+            System.out.println("some error");
             String refreshed = authService.refreshAccessToken(ownerOfPlaylist);
             ownerOfPlaylist.setAccessToken(refreshed);
             userRepo.save(ownerOfPlaylist);
@@ -155,7 +164,9 @@ public class SpotifyService {
             newHeaders.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, Object>> retryRequest = new HttpEntity<>(data, newHeaders);
             restTemplate.postForEntity("https://api.spotify.com/v1/playlists/" + playlistId + "/tracks", retryRequest, Void.class);
-            trackSuggestionService.saveTrackSuggestion(user, trackUri, p);
+            String altered = trackUri.replace("spotify:track:", "");
+            SpotifyDTO spotifyDTO = spotifyTrackService.getSongAndArtistName(user, trackUri);
+            trackSuggestionService.saveTrackSuggestion(user, trackUri, p, spotifyDTO.getArtist(), spotifyDTO.getSongName());
 
 //            addTrackToPlaylist(user, playlistId, trackUri);
         }

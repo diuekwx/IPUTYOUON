@@ -47,11 +47,13 @@ public class TrackSuggestionService {
         return trackSuggestionRepo.findByPlaylistIdAndStatus(playListId, status);
     }
 
-    public TrackSuggestion saveTrackSuggestion(Users user, String trackUri, Playlist playlisy_id){
+    public TrackSuggestion saveTrackSuggestion(Users user, String trackUri, Playlist playlisy_id, String artists, String trackName){
         TrackSuggestion trackSuggestion = new TrackSuggestion();
         trackSuggestion.setUser(user);
         trackSuggestion.setTrackUri(trackUri);
         trackSuggestion.setPlaylist(playlisy_id);
+        trackSuggestion.setArtists(artists);
+        trackSuggestion.setSongName(trackName);
         return trackSuggestionRepo.save(trackSuggestion);
     }
 
@@ -65,13 +67,11 @@ public class TrackSuggestionService {
         for (TrackSuggestion track : alltrackSuggestions) {
             Users user = userRepo.getReferenceById(track.getUser().getId());
             String username = user.getDisplayName();
-            String trackUri = track.getTrackUri().replace("spotify:track:", "");
+//            String trackUri = track.getTrackUri().replace("spotify:track:", "");
+//            String artistName = spotifyTrackService.getArtistName(user, trackUri);
+//            String trackName = spotifyTrackService.getSongName(user, trackUri);
 
-            String artistName = spotifyTrackService.getArtistName(user, trackUri);
-            String trackName = spotifyTrackService.getSongName(user, trackUri);
-
-            String contributionText = trackName + " - " + artistName;
-
+            String contributionText = track.getSongName() + " - " + track.getArtists();
             contributions.add(new ContributionDTO(username, contributionText));
         }
 

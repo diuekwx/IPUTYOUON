@@ -16,5 +16,8 @@ public interface TrackSuggestionRepo extends JpaRepository<TrackSuggestion, Long
     List<TrackSuggestion> findByUserId(Long userId);
     List<TrackSuggestion> findByPlaylistIdAndStatus(Long playlistId, String status);
     List<TrackSuggestion> findByPlaylistId(Long playlistId);
+    String findBySongName(String name);
+    String findByArtists(String name);
+
 
 }

@@ -24,6 +24,27 @@ public class TrackSuggestion {
     @Column(length = 20)
     private String status = "pending";
 
+    @Column(name="song_name")
+    private String songName;
+
+    private String artists;
+
+
+    public String getSongName() {
+        return songName;
+    }
+
+    public void setSongName(String songName) {
+        this.songName = songName;
+    }
+
+    public String getArtists() {
+        return artists;
+    }
+
+    public void setArtists(String artists) {
+        this.artists = artists;
+    }
 
     public Long getId() {
         return id;

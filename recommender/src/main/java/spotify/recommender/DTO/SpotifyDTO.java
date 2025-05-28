@@ -2,24 +2,32 @@ package spotify.recommender.DTO;
 
 public class SpotifyDTO {
 
-    private String name;
+    private String artistNames;
     private String description;
+    private String songName;
     private String userID;
 
     public SpotifyDTO() {
     }
-    public SpotifyDTO(String name, String desc){
-        this.name = name;
-        this.description = desc;
+    public SpotifyDTO(String artistNames, String songName){
+        this.songName = songName;
+        this.artistNames = artistNames;
     }
 
-    public String getName() {
-        return name;
+    public String getArtist(){
+        return artistNames;
+    }
+    public void setArtist(String artistNames){
+        this.artistNames = artistNames;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getSongName(){
+        return songName;
     }
+    public void setSongName(String name){
+        this.songName= name;
+    }
+
 
     public String getDescription() {
         return description;

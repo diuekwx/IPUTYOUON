@@ -5,7 +5,7 @@ import './PlaylistCreation.css';
 import HomeButton from './HomeButton.tsx';
 
 export default function PlaylistCreation() {
-    const [status, setStatus] = useState<string>("");
+    const [status, setStatus] = useState<string>("CREATE");
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [searchParams] = useSearchParams();
@@ -44,7 +44,11 @@ export default function PlaylistCreation() {
 
             if (response.ok) {
                 const data = await response.json();
-                setStatus("Success! Playlist ID: " + data);
+                setStatus("CREATED!");
+                setTimeout(() => {
+                    setStatus('CREATE');
+                }, 1500);
+
             } else {
                 const errorText = await response.text();
                 console.error("Error response:", errorText);
@@ -83,8 +87,7 @@ export default function PlaylistCreation() {
             </div>
 
             <div>
-                <button onClick={createPlaylistz}>CREATE</button>
-                <p>{status}</p>
+                <button onClick={createPlaylistz}>{status}</button>
             </div>
 
             <HomeButton />

@@ -46,22 +46,28 @@ export default function UserPlaylists() {
     }
 
     return (
-        <div>
+        <div style={{
+            height: '100vh',
+        }}>
             <h1 style={{
                 color: 'white',
                 fontSize: '50px',
-                width: '100%',
+                width: '100vw',
                 textAlign: 'center',
-                lineHeight: '90px'
+                lineHeight: '90px',
+                top: '15px',
             }}><b>Your Playlists</b></h1>
             {playlistIds.length > 0 ? (
                 <div>
                     <PlaylistEmbed listOfPlaylist={playlistIds} />
                 </div>
             ) : (
-                <p>No playlists found.</p>
+                <p style={{
+                    width: '100vw',
+                    textAlign: 'center'
+                }}>No playlists found.</p>
             )}
-            
+
             <HomeButton />
         </div>
     );

@@ -9,11 +9,18 @@ export default function Feed() {
     const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>("initialize");
     const [nextPlaylist, setNextPlaylist] = useState<string | null>(null);
     const [animationState, setAnimationState] = useState<'idle' | 'out' | 'in'>('idle');
-
+    const [contributorsList, setContributorsList] = useState<{ username: string, contribution: string }[] | null>(null);
 
     useEffect(() => {
+        // initialize feed page when you first go to it
         getFeed();
     }, []);
+
+    useEffect(() => {
+        if (animationState === 'out' && selectedPlaylist === nextPlaylist) {
+            setAnimationState('in');
+        }
+    }, [selectedPlaylist, animationState, nextPlaylist]);
 
     const addToPlaylist = async () => {
         console.log("using:", selectedPlaylist)
@@ -47,7 +54,13 @@ export default function Feed() {
         if (response.ok) {
             const data = await response.json();
             console.log(data);
+            console.log("Type:" + typeof data, Array.isArray(data), data)
+            setContributorsList(data);
         }
+    }
+
+    const closeContributors = async () => {
+        setContributorsList(null);
     }
 
     const getFeed = async () => {
@@ -79,7 +92,7 @@ export default function Feed() {
     const handleAnimationEnd = () => {
         if (animationState === 'out') {
             setSelectedPlaylist(nextPlaylist);
-            setAnimationState('in');
+            //setAnimationState('in');
         } else if (animationState === 'in') {
             setAnimationState('idle');
         }
@@ -89,26 +102,39 @@ export default function Feed() {
         <div className="feed-page">
             <h1>COMMUNITY FEED</h1>
 
+            {contributorsList ? (
+                <div className="contributors-list" >
+                    <ul>
+                        {contributorsList.map((contributor, index) => (
+                            <li key={index}>
+                                - {contributor.username}: {contributor.contribution}
+                            </li>
+                        ))}
+                    </ul>
+                    <button onClick={closeContributors}>CLOSE</button>
+                </div>
+            ) : ''}
+
             <div className="track-card">
                 <div className="feed-left">
-                        {selectedPlaylist ? (
-                            <iframe
-                                className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
-                                onAnimationEnd={handleAnimationEnd}
-                                style={{ borderRadius: "12px" }}
-                                src={url + selectedPlaylist}
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy"
-                                title="Current/ Selected Playlist"
-                            ></iframe>
-                        ) : (
-                            <div
-                                className={`error-box ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
-                                onAnimationEnd={handleAnimationEnd}
-                            ><p>Oops, an error occurred. Try refreshing again!</p>
-                            </div>
-                        )}
-                    
+                    {selectedPlaylist ? (
+                        <iframe
+                            className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
+                            onAnimationEnd={handleAnimationEnd}
+                            style={{ borderRadius: "12px" }}
+                            src={url + selectedPlaylist}
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"
+                            title="Current/ Selected Playlist"
+                        ></iframe>
+                    ) : (
+                        <div
+                            className={`error-box ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
+                            onAnimationEnd={handleAnimationEnd}
+                        ><p>Oops, an error occurred. Try refreshing again!</p>
+                        </div>
+                    )}
+
 
                     <button onClick={getFeed} className="blue-button">Refresh</button>
                 </div>
@@ -129,6 +155,6 @@ export default function Feed() {
 
             <HomeButton />
 
-        </div>
+        </div >
     )
 }

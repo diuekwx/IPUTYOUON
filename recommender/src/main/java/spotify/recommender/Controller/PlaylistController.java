@@ -131,7 +131,7 @@ public class PlaylistController {
     @GetMapping("/get-user-playlist")
     public ResponseEntity<List<String>> getPlaylist(Authentication authentication){
         Users userid = spotifyService.getUser(authentication);
-        List<String> playlists = spotifyService.getPlaylist(userid);
+        List<String> playlists = spotifyService.syncDb(userid);
 
 //        List<String> playlistLinks = new ArrayList<>();
 //        for (Map p: playlists){
@@ -158,6 +158,7 @@ public class PlaylistController {
 
         Users userid = spotifyService.getUser(authentication);
         List<String> feedPlaylist = playlistService.getUserFeed(userid, 2);
+
         System.out.println(feedPlaylist);
         return ResponseEntity.ok(feedPlaylist);
 

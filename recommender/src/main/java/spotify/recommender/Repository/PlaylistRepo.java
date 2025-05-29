@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface PlaylistRepo extends JpaRepository<Playlist, Long> {
 
-    Playlist findBySpotifyPlaylistId(String name);
+    Playlist findBySpotifyPlaylistId(String id);
 
     List<Playlist> findAllByUserOwner(Users name);
 

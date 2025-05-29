@@ -28,6 +28,10 @@ public class PlaylistService {
         return playlistRepo.findAllByUserOwner(name);
     }
 
+    public void deleteEntry(Playlist playlist){
+        playlistRepo.delete(playlist);
+    }
+
     public List<Integer> getRandomIndexes(int count){
         Random r = new Random();
         Set<Integer> result = new HashSet<>();
@@ -41,6 +45,10 @@ public class PlaylistService {
 
     public List<String> getUserFeed(Users user, int sampleSize){
         List<Integer> indexes = getRandomIndexes(sampleSize);
+        // LOL
+        while (indexes.size() != 2){
+            indexes = getRandomIndexes(sampleSize);
+        }
         return playlistRepo.getRandomFeed(user, indexes);
     }
 
@@ -52,5 +60,7 @@ public class PlaylistService {
         playlist.setSpotifyPlaylistId(playlistId);
         return playlistRepo.save(playlist);
     }
+
+
 
 }

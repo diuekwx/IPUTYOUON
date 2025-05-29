@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -173,8 +174,6 @@ public class SpotifyService {
 
     }
 
-
-
     // should return a list of playlists maybe? how to do ?
     public Object getAllPlaylists(Users user){
         RestTemplate restTemplate = new RestTemplate();
@@ -194,11 +193,102 @@ public class SpotifyService {
         playlistRepo.deleteByUserOwner(user);
     }
 
+    public List<String> syncDb(Users user){
+        // all user playlist in db
+        List<Playlist> all = playlistService.getUsersPlaylist(user);
+
+        // all their playlist from spotify and in the db (if removed from spotify library, wont be in here)
+        List<String> allPlaylistIds = getAlluserPlaylist(user);
+
+        //go through all playlist in db, remove the ones not on their spotify
+        for (Playlist p: all){
+            String id = p.getSpotifyPlaylistId();
+            if (!allPlaylistIds.contains(id)){
+                playlistService.deleteEntry(p);
+            }
+        }
+        return allPlaylistIds;
+    }
+
+    public List<String> getAlluserPlaylist(Users user){
+        RestTemplate restTemplate = new RestTemplate();
+        String accessToken = decryptedAccessToken(user);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+
+        List<String> playlists = new ArrayList<>();
+            try{
+                // exchange for auth header
+                String endpoint = "https://api.spotify.com/v1/me/playlists";
+                while (endpoint != null) {
+                    ResponseEntity<Map> response = restTemplate.exchange(
+                            endpoint,
+                            HttpMethod.GET,
+                            request,
+                            Map.class
+                    );
+
+                    List<Map<String, Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
+                    // this is only for getting the playlists weve made through the app -> return this list to the playlist service
+                    // go through the list, find all playlist by a user, and then check if any of them arnet in the list, if so, delete
+                    for (Map<String, Object> item : items) {
+                        Map<String, Object> uri = (Map<String, Object>) item.get("external_urls");
+                        String externalUrl = (String) uri.get("spotify");
+                        String parsed = externalUrl.replace("https://open.spotify.com/playlist/", "");
+                        if (playlistRepo.findBySpotifyPlaylistId(parsed) != null) {
+                            playlists.add(parsed);
+                        }
+                    }
+                    // pagination
+                    endpoint = (String) response.getBody().get("next");
+
+//                if (response.getStatusCode().is2xxSuccessful()){
+////                    playlistList.add((response.getBody()));
+//                    playlistList.add(playlistId);
+//                }
+                }
+                return playlists;
+            }
+            catch (HttpClientErrorException e){
+                // error 404 case - should occur when user deletes the playlist from spotify, thus deletes from db
+//                if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+//                    playlistRepo.delete(playlist);
+//                }
+                String refreshed = authService.refreshAccessToken(user);
+                user.setAccessToken(refreshed);
+                // Retry with new token
+                headers = new HttpHeaders();
+                headers.setBearerAuth(refreshed);
+                request = new HttpEntity<>(headers);
+
+                ResponseEntity<Map> response = restTemplate.exchange(
+                        "https://api.spotify.com/v1/me/playlists",
+                        HttpMethod.GET,
+                        request,
+                        Map.class
+                );
+
+                List<Map<String, Object>> items = (List<Map<String, Object>>) response.getBody().get("items");
+                // this is only for getting the playlists weve made through the app -> return this list to the playlist service
+                // go through the list, find all playlist by a user, and then check if any of them arnet in the list, if so, delete
+                for (Map<String, Object> item: items){
+                    Map<String, Object> uri = (Map<String, Object>) item.get("external_urls");
+                    String externalUrl = (String) uri.get("spotify");
+                    String parsed = externalUrl.replace("https://open.spotify.com/playlist/", "");
+                    if (playlistRepo.findBySpotifyPlaylistId(parsed) != null){
+                        playlists.add(parsed);
+                    }
+                }
+                return playlists;
+        }
+
+    }
+
     //LOL for embeds you just need the playlist ID not the entire link HAHAHAHAHAHA whoops...
     public List<String> getPlaylist(Users user){
 
         List<Playlist> userPlaylist = playlistService.getUsersPlaylist(user);
-        System.out.println(userPlaylist);
         RestTemplate restTemplate = new RestTemplate();
         String accessToken = decryptedAccessToken(user);
         HttpHeaders headers = new HttpHeaders();
@@ -208,6 +298,7 @@ public class SpotifyService {
         List<String> playlistList = new ArrayList<>();
         String playlistId;
 
+        // need to add a check to see if that playlist still exists on their profile
         for (Playlist playlist: userPlaylist){
             playlistId = playlist.getSpotifyPlaylistId();
 
@@ -226,13 +317,12 @@ public class SpotifyService {
 //                    playlistList.add((response.getBody()));
                     playlistList.add(playlistId);
                 }
-                else {
-                    playlistList.add(null);
-                }
-
             }
-            catch (HttpClientErrorException.Unauthorized e){
-
+            catch (HttpClientErrorException e){
+                // error 404 case - should occur when user deletes the playlist from spotify, thus deletes from db
+                if(e.getStatusCode() == HttpStatus.NOT_FOUND){
+                    playlistRepo.delete(playlist);
+                }
                 String refreshed = authService.refreshAccessToken(user);
                 user.setAccessToken(refreshed);
                 // Retry with new token

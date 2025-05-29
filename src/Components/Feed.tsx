@@ -91,10 +91,9 @@ export default function Feed() {
 
             <div className="track-card">
                 <div className="feed-left">
-                    {animationState !== 'in' && (
-                        selectedPlaylist ? (
+                        {selectedPlaylist ? (
                             <iframe
-                                className={`playlist ${animationState === 'out' ? 'slide-out' : ''}`}
+                                className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                                 onAnimationEnd={handleAnimationEnd}
                                 style={{ borderRadius: "12px" }}
                                 src={url + selectedPlaylist}
@@ -104,32 +103,12 @@ export default function Feed() {
                             ></iframe>
                         ) : (
                             <div
-                                className={`error-box ${animationState === 'out' ? 'slide-out' : ''}`}
+                                className={`error-box ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                                 onAnimationEnd={handleAnimationEnd}
                             ><p>Oops, an error occurred. Try refreshing again!</p>
                             </div>
-                        )
-                    )}
-
-                    {animationState === 'in' && (
-                        nextPlaylist ? (
-                            <iframe
-                                className={`playlist slide-in`}
-                                onAnimationEnd={handleAnimationEnd}
-                                style={{ borderRadius: "12px" }}
-                                src={url + nextPlaylist}
-                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                loading="lazy"
-                                title="Next Playlist"
-                            ></iframe>
-                        ) : (
-                            <div
-                                className={`error-box slide-in`}
-                                onAnimationEnd={handleAnimationEnd}
-                            ><p>Oops, an error occurred. Try refreshing again!</p>
-                            </div>
-                        )
-                    )}
+                        )}
+                    
 
                     <button onClick={getFeed} className="blue-button">Refresh</button>
                 </div>

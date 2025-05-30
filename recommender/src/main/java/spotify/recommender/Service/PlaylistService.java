@@ -47,6 +47,7 @@ public class PlaylistService {
         List<Integer> indexes = getRandomIndexes(sampleSize);
         // LOL
         while (indexes.size() != 2){
+
             indexes = getRandomIndexes(sampleSize);
         }
         return playlistRepo.getRandomFeed(user, indexes);

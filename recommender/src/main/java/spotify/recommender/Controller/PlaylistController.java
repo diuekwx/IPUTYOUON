@@ -158,7 +158,9 @@ public class PlaylistController {
 
         Users userid = spotifyService.getUser(authentication);
         List<String> feedPlaylist = playlistService.getUserFeed(userid, 2);
-
+        while (feedPlaylist.size() != 2){
+            feedPlaylist = playlistService.getUserFeed(userid, 2);
+        }
         System.out.println(feedPlaylist);
         return ResponseEntity.ok(feedPlaylist);
 

@@ -25,7 +25,7 @@
 .playlist-creation h1 {
     font-family: 'Spac3-halftone', sans-serif;
     color: white;
-    font-size: 60;
+    font-size: 3.4rem;
 }
 
 .playlist-creation button:not(.cancel) {
@@ -34,7 +34,7 @@
     background-color: transparent;
     border-radius: 8px;
     color: white;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
 .playlist-creation button:hover {
@@ -49,7 +49,7 @@
     border: none;
     border-bottom: 3px solid white;
     color: white;
-    font-size: 24px;
+    font-size: 1.4rem;
     text-align: center;
     width: 50vw;
 }
@@ -61,6 +61,6 @@
 .playlist-creation p {
     width: 50vw;
     text-align: center;
-    font-size: 18px;
+    font-size: 1.2rem;
     color: white;
 }

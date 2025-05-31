@@ -1,0 +1,28 @@
+.user-playlists {
+    min-height: 100vh;
+}
+
+.user-playlists h1 {
+    color: white;
+    font-size: 2.8rem;
+    width: 100%;
+    text-align: center;
+    line-height: 90px;
+    top: 15px;
+}
+
+.user-playlists p {
+    width: 100vw;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .user-playlists h1 {
+        color: white;
+        font-size: 2rem;
+        width: 100%;
+        text-align: center;
+        line-height: 70px;
+        top: 15px;
+    }
+}

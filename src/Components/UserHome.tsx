@@ -51,9 +51,9 @@ export default function UserHome() {
         <>
             <img src={cd_disk} className="cd-spin"></img>
             <div className="homepage">
-                <h1><b>I PUT<br></br>YOU ON</b></h1>
+                <h1>I PUT YOU ON</h1>
                 <div className="homepage-buttons">
-                    <p> <br></br>tired of ur bum ass friends and their sh*t music?<br></br>
+                    <p> <br></br>tired of ur bum ass friends and their sh*t music?
                         let itnernet strangers who indludge in the msot obscure genres put you on!@!!</p>
 
                     {loggedIn ? (

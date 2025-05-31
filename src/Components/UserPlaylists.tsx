@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import PlaylistEmbed from './PlaylistEmbed';
 import cd_disk from '../assets/cd.png';
 import './LoadingScreen.css';
+import './UserPlaylists.css';
 import HomeButton from './HomeButton.tsx';
 
 export default function UserPlaylists() {
@@ -46,29 +47,16 @@ export default function UserPlaylists() {
     }
 
     return (
-        <div style={{
-            height: '100vh',
-        }}>
-            <h1 style={{
-                color: 'white',
-                fontSize: '50px',
-                width: '100vw',
-                textAlign: 'center',
-                lineHeight: '90px',
-                top: '15px',
-            }}><b>Your Playlists</b></h1>
+        <div className="user-playlists">
+            <div>
+                <HomeButton />
+                <h1>Your Playlists</h1>
+            </div>
             {playlistIds.length > 0 ? (
-                <div>
-                    <PlaylistEmbed listOfPlaylist={playlistIds} />
-                </div>
+                <PlaylistEmbed listOfPlaylist={playlistIds} />
             ) : (
-                <p style={{
-                    width: '100vw',
-                    textAlign: 'center'
-                }}>No playlists found.</p>
+                <p>No playlists found.</p>
             )}
-
-            <HomeButton />
         </div>
     );
 }

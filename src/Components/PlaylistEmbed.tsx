@@ -11,7 +11,6 @@ export default function PlaylistEmbed({ listOfPlaylist }: PlaylistEmbedProps) {
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-around',
-            alignItems: 'flex-start',
             width: '100%',
             rowGap: '30px',
             paddingLeft: '5%',

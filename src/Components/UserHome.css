@@ -5,7 +5,6 @@ html {
 button:focus,
 button:active,
 button:focus-visible {
-  border: none;
   outline: none;
   box-shadow: none;
 }

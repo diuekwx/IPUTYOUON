@@ -52,11 +52,19 @@ export default function PlaylistCreation() {
             } else {
                 const errorText = await response.text();
                 console.error("Error response:", errorText);
-                setStatus(`Error ${response.status}: ${errorText}`);
+                //setStatus(`Error ${response.status}: ${errorText}`);
+                setStatus("An error occured :(");
+                setTimeout(() => {
+                    setStatus('CREATE');
+                }, 1500);
             }
         } catch (err) {
             console.error("Network error:", err);
-            setStatus(`Network error: ${err instanceof Error ? err.message : String(err)}`);
+            //setStatus(`Network error: ${err instanceof Error ? err.message : String(err)}`);
+            setStatus("An error occured :(");
+            setTimeout(() => {
+                setStatus('CREATE');
+            }, 1500);
         }
     };
 

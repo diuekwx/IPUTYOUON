@@ -3,19 +3,18 @@ import './Search.css';
 
 interface SearchProps {
   setTrack: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedTrack: string | null;
 }
 
-export default function Search({setTrack}: SearchProps) {
+export default function Search({ setTrack, selectedTrack }: SearchProps) {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
-  const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
 
-const handleSelect = (track: string) => {
-  setTrack("spotify:track:" + track);
-  setSelectedTrack(track);
-};
+  const handleSelect = (track: string) => {
+    setTrack("spotify:track:" + track);
+  };
 
-    const url = `https://open.spotify.com/embed/track/`
+  const url = `https://open.spotify.com/embed/track/`
 
   const search = async (term: string) => {
     try {
@@ -28,7 +27,7 @@ const handleSelect = (track: string) => {
       });
 
       if (response.ok) {
-        const data: string[] = await response.json(); // Adjust type if your backend returns more complex data
+        const data: string[] = await response.json();
         setSearchResults(data);
         console.log(data);
       } else {
@@ -58,8 +57,8 @@ const handleSelect = (track: string) => {
         value={searchTerm}
         onChange={handleSearch}
       />
-              <div>
-            {/* {searchResults.map((link: string, index: number) => (
+      <div>
+        {/* {searchResults.map((link: string, index: number) => (
                 <iframe
                     key={index}
                     style={{ borderRadius: "12px" }}
@@ -71,24 +70,20 @@ const handleSelect = (track: string) => {
                     title={`Spotify playlist ${index}`} 
                 ></iframe>
             ))} */}
-            {
-            searchResults.map((link: string, index: number) => (
-                <div key={index} className="suggestion-card">
-                <iframe
-                    src={url + link}
-                    width="400"
-                    height="80"
+        {searchResults.map((link: string, index: number) => (
+          <div key={index} className="suggestion-card">
+            <iframe
+              src={url + link}
+              height="80"
+              allow="encrypted-media"
+              className="song-searches"
+            ></iframe>
+            <button onClick={() => handleSelect(link)} className="green-button">{selectedTrack === `spotify:track:${link}` ? "Selected" : "Select"}</button>
+          </div>
+        ))}
 
-                    allow="encrypted-media"
-                    className="song-searches"
-                ></iframe>
-                <button onClick={() => handleSelect(link)} className="green-button">{selectedTrack === link ? "Selected" : "Select"}</button>
-                </div>
-            ))
-            }
-
-        </div>
+      </div>
     </>
-    
+
   );
 }

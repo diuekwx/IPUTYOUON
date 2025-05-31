@@ -7,7 +7,7 @@ input {
     color: white;
     font-size: 1.4rem;
     text-align: center;
-    width: 30vw;
+    width: 100%;
 }
 
 input:focus {
@@ -16,7 +16,11 @@ input:focus {
 
 .suggestion-card {
     display: flex;
-    width: 30vw;
+    width: 100%;
+}
+
+.suggestion-card iframe {
+    flex: 1;
 }
 
 .green-button:hover {

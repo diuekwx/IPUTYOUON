@@ -5,6 +5,7 @@ import HomeButton from './HomeButton.tsx';
 
 
 export default function Feed() {
+    const [status, setStatus] = useState<string>("Recommend Selected Song");
     const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
     const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>("initialize");
     const [nextPlaylist, setNextPlaylist] = useState<string | null>(null);
@@ -23,22 +24,44 @@ export default function Feed() {
     }, [selectedPlaylist, animationState, nextPlaylist]);
 
     const addToPlaylist = async () => {
-        console.log("using:", selectedPlaylist)
-        const response = await fetch(`http://127.0.0.1:8080/api/playlist/${selectedPlaylist}/add-tracks`, {
-            credentials: "include",
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: selectedTrack,
-        });
+        try {
+            setStatus("Recommending song...");
+            console.log("using:", selectedPlaylist)
+            const response = await fetch(`http://127.0.0.1:8080/api/playlist/${selectedPlaylist}/add-tracks`, {
+                credentials: "include",
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: selectedTrack,
+            });
 
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Added track to playlist:", data);
-            // TODO: need to update playlistEmbed to show the added song
-        }
+            if (response.ok) {
+                //const data = await response.json();
+                //console.log("Added track to playlist:", data);
+                setStatus("Recommended!");
+                setTimeout(() => {
+                    setStatus('Recommend Selected Song');
+                }, 1500);
+                
+                // reset selected track
+                setSelectedTrack(null);
+                // TODO: need to update playlistEmbed to show the added song
+            } else {
+                const errorText = await response.text();
+                console.error("Error response:", errorText);
+                setStatus("An error occured :(");
+                setTimeout(() => {
+                    setStatus('Recommend Selected Song');
+                }, 1500);
+            }
+        } catch (err) {
+            console.error("Network error:", err);
+            setStatus("An error occured :(");
+                setTimeout(() => {
+                    setStatus('Recommend Selected Song');
+                }, 1500);
+        }  
     }
 
     const url = `https://open.spotify.com/embed/playlist/`
@@ -140,12 +163,12 @@ export default function Feed() {
                 </div>
 
                 <div className="feed-right">
-                    <Search setTrack={setSelectedTrack} />
+                    <Search setTrack={setSelectedTrack} selectedTrack={selectedTrack} />
                     <button onClick={() => addToPlaylist()}
                         className={selectedTrack ? "pink-button" : "disabled-button"}
                         disabled={!selectedTrack}
                     >
-                        Recommend Selected Song
+                        {status}
                     </button>
                     <button onClick={() => getContributors()} className="pink-button">
                         Get Contributors

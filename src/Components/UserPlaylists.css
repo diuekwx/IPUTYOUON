@@ -1,5 +1,6 @@
 .user-playlists {
     min-height: 100vh;
+    width: 100vw;
 }
 
 .user-playlists h1 {

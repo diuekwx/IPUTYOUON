@@ -48,10 +48,8 @@ export default function UserPlaylists() {
 
     return (
         <div className="user-playlists">
-            <div>
-                <HomeButton />
-                <h1>Your Playlists</h1>
-            </div>
+            <HomeButton />
+            <h1>Your Playlists</h1>
             {playlistIds.length > 0 ? (
                 <PlaylistEmbed listOfPlaylist={playlistIds} />
             ) : (

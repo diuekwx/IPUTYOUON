@@ -2,6 +2,14 @@ html {
   font-size: 18px;
 }
 
+button:focus,
+button:active,
+button:focus-visible {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -12,16 +20,17 @@ body {
 }
 
 @font-face {
-    font-family: 'Spac3-halftone';
-    src: url('../assets/Spac3-halftone.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Spac3-halftone';
+  src: url('../assets/Spac3-halftone.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -30,9 +39,9 @@ body {
 .cd-spin {
   animation: spin 10s linear infinite;
   position: fixed;
-  width: 65%;
-  top: -45vh;
-  left: -10vw;
+  width: 65vw;
+  top: -300px;
+  left: -125px;
   z-index: -0;
 }
 
@@ -119,3 +128,5 @@ body {
   border-color: greenyellow;
   color: greenyellow;
 }
+
+@media (max-width: 768px) {}

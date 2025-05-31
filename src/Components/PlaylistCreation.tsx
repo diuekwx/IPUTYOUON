@@ -64,6 +64,7 @@ export default function PlaylistCreation() {
 
     return (
         <div className="playlist-creation">
+            <HomeButton />
             <h1>Spotify Playlist Creation</h1>
 
             <div>
@@ -89,8 +90,6 @@ export default function PlaylistCreation() {
             <div>
                 <button onClick={createPlaylistz}>{status}</button>
             </div>
-
-            <HomeButton />
 
         </div>
     );

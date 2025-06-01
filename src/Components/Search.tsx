@@ -10,12 +10,14 @@ interface SearchProps {
 
 export default function Search({ selectedPlaylist, refreshState, refreshSearch }: SearchProps) {
   const [status, setStatus] = useState<string>("Recommend");
+  const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
   const debouncedQuery = debounce(searchTerm, 200);
 
 
   const handleSelect = async (track: string) => {
+    setSelectedTrack(track);
     const fullTrack = "spotify:track:" + track;
 
     // add to playlist
@@ -32,17 +34,21 @@ export default function Search({ selectedPlaylist, refreshState, refreshSearch }
 
       if (response.ok) {
         setStatus("Recommended!");
-        setTimeout(() => setStatus("Recommend"), 1500);
 
       } else {
         const errorText = await response.text();
         console.error("Error response:", errorText);
-        setStatus("An error occurred :(");
-        setTimeout(() => setStatus("Recommend"), 1500);
+        setStatus("ERROR");
       }
+
+      setTimeout(() => {
+        setSelectedTrack(null);
+        setStatus("Recommend");
+      }, 1500);
+
     } catch (err) {
       console.error("Network error:", err);
-      setStatus("An error occurred :(");
+      setStatus("ERROR");
       setTimeout(() => setStatus("Recommend"), 1500);
     }
   };
@@ -83,18 +89,18 @@ export default function Search({ selectedPlaylist, refreshState, refreshSearch }
   //   }
   // };
   useEffect(() => {
-    
-    if (debouncedQuery.trim() === ''){
+
+    if (debouncedQuery.trim() === '') {
       setSearchResults([]);
       return;
     }
-    if (debouncedQuery){
+    if (debouncedQuery) {
       search(debouncedQuery);
     }
   }, [debouncedQuery]);
 
   useEffect(() => {
-      if (refreshState) {
+    if (refreshState) {
       setSearchResults([]);
       setSearchTerm('');
       refreshSearch();
@@ -118,7 +124,7 @@ export default function Search({ selectedPlaylist, refreshState, refreshSearch }
               allow="encrypted-media"
               className="song-searches"
             ></iframe>
-            <button onClick={() => handleSelect(link)} className="green-button">{status}</button>
+            <button onClick={() => handleSelect(link)} className="green-button">{selectedTrack === link ? status : "Recommend"}</button>
           </div>
         ))}
 

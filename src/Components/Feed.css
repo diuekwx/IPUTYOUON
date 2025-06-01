@@ -144,7 +144,7 @@ p {
     top: 25%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .track-card {
         display: flex;
         flex-direction: column;

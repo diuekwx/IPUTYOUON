@@ -47,7 +47,7 @@ body {
 .homepage {
   display: flex;
   flex-direction: column;
-  width: 55vw;
+  width: 60vw;
   position: absolute;
   right: 10vw;
   top: 6vh;
@@ -128,4 +128,130 @@ body {
   color: greenyellow;
 }
 
-@media (max-width: 768px) {}
+
+@media (max-width: 1300px) {
+  .cd-spin {
+    animation: spin 10s linear infinite;
+    position: fixed;
+    width: 65vw;
+    top: 0px;
+    left: -125px;
+    z-index: -0;
+  }
+
+  .homepage {
+    display: flex;
+    flex-direction: column;
+    width: 70vw;
+    position: absolute;
+    top: 6vh;
+    padding: 2%;
+  }
+
+  .homepage h1 {
+    font-family: 'Spac3-halftone', sans-serif;
+    font-size: 8rem;
+    color: white;
+    text-align: left;
+    line-height: 80%;
+  }
+
+  .homepage p {
+    font-size: 1.2rem;
+    color: white;
+    text-align: center;
+    line-height: 90%;
+    width: 40vw;
+  }
+
+  .homepage-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 25px;
+    height: 43vh;
+  }
+
+  .homepage-buttons div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 43vh;
+  }
+
+  .homepage-buttons button {
+    width: 40vw;
+    border: 3px solid white;
+    background-color: transparent;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 1000px) {
+  .homepage h1 {
+    font-family: 'Spac3-halftone', sans-serif;
+    font-size: 7rem;
+    color: white;
+    text-align: left;
+    line-height: 80%;
+  }
+}
+
+@media (max-width: 675px) {
+  .cd-spin {
+    animation: spin 10s linear infinite;
+    position: fixed;
+    width: 100%;
+    top: -100px;
+    left: -100px;
+    z-index: -0;
+  }
+
+  .homepage {
+    display: flex;
+    flex-direction: column;
+    width: 75vw;
+    top: 10vh;
+    padding: 2%;
+    left: 10vw;
+  }
+
+  .homepage h1 {
+    font-family: 'Spac3-halftone', sans-serif;
+    font-size: 6rem;
+    color: white;
+    text-align: right;
+    line-height: 80%;
+  }
+
+  .homepage p {
+    font-size: 1rem;
+    color: white;
+    text-align: center;
+    line-height: 90%;
+    width: 50vw;
+  }
+
+  .homepage-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    height: 43vh;
+    bottom: 50px;
+  }
+
+  .homepage-buttons button {
+    width: 75vw;
+    border: 3px solid white;
+    background-color: transparent;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+  }
+}

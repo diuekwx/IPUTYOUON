@@ -90,19 +90,6 @@ export default function Feed() {
         <div className="feed-page">
             <h1>COMMUNITY FEED</h1>
 
-            {/*contributorsList ? (
-                <div className="contributors-list" >
-                    <ul>
-                        {contributorsList.map((contributor, index) => (
-                            <li key={index}>
-                                - {contributor.username}: {contributor.contribution}
-                            </li>
-                        ))}
-                    </ul>
-                    <button onClick={closeContributors}>CLOSE</button>
-                </div>
-            ) : ''*/}
-
             <div className="track-card">
                 <div className="feed-left">
                     {selectedPlaylist ? (
@@ -123,29 +110,38 @@ export default function Feed() {
                         </div>
                     )}
 
-                    {showContributors ? (
-                        <div>
+
+                    {selectedPlaylist && (
+                        showContributors ? (
                             <div className="contributors-box" >
+                                <p>PLAYLIST CONTRIBUTORS</p>
                                 <div className="contributors" >
                                     {contributorsList ? (
-                                        <ul>
-                                            {contributorsList.map((contributor, index) => (
-                                                <li key={index}>
-                                                    {contributor.username}: {contributor.contribution}
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <table>
+                                            <thead><tr>
+                                                <th style={{ textAlign: "left" }}><u>Username</u></th>
+                                                <th style={{ textAlign: "right" }}><u>Song</u></th>
+                                            </tr></thead>
+                                            <tbody>
+                                                {contributorsList.map((contributor, index) => (
+                                                    <tr key={index}>
+                                                        <td style={{ textAlign: "left" }}>{contributor.username}</td>
+                                                        <td style={{ textAlign: "right" }}>{contributor.contribution}</td>
+                                                    </tr>))}
+                                            </tbody>
+                                        </table>
                                     ) : (
                                         <p>This playlist has no contributors.<br></br>Be the first!</p>
                                     )}
                                 </div>
                                 <button className="show-hide-contributors" onClick={() => setShowContributors(false)}><u>Hide Contributors</u></button>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="hidden-contributors">
-                            <button className="show-hide-contributors" onClick={() => setShowContributors(true)}><u>Show Contributors</u></button>
-                        </div>
+
+                        ) : (
+                            <div className="hidden-contributors">
+                                <button className="show-hide-contributors" onClick={() => setShowContributors(true)}><u>Show Contributors</u></button>
+                            </div>
+                        )
                     )}
 
                     <div className="left-buttons">
@@ -155,7 +151,6 @@ export default function Feed() {
 
                 <div className="feed-right">
                     <Search selectedPlaylist={selectedPlaylist} refreshState={refreshSearch} refreshSearch={() => resetRefresh()} />
-
                 </div>
             </div>
 

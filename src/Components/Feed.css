@@ -90,6 +90,10 @@ button {
     font-size: 1rem;
 }
 
+.blue-button {
+    margin-top: 15px;
+}
+
 .blue-button:hover {
     border-color: rgb(40, 148, 255);
     color: rgb(40, 148, 255);
@@ -128,7 +132,7 @@ p {
 
 .contributors-box {
     width: 40vw;
-    height: 50vh;
+    height: 48vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -142,9 +146,22 @@ p {
 }
 
 .contributors {
-    height: 100%;
+    height: 75vh;
     overflow-y: auto;
     top: 25%;
+    scrollbar-color: hotpink transparent;
+}
+
+.contributors-box p {
+    font-family: 'Spac3-halftone', sans-serif;
+    color: hotpink;
+    text-align: center;
+    line-height: 20px;
+}
+
+.contributors-box th,
+.contributors-box td {
+    padding: 0.5em 1em;
 }
 
 .show-hide-contributors {
@@ -214,7 +231,11 @@ p {
 
     .playlist {
         width: 80vw;
-        height: 30vh;
+        height: 22vh;
+    }
+
+    .blue-button {
+        margin-top: 15px;
     }
 
     .contributors-box {
@@ -224,5 +245,9 @@ p {
 
     .hidden-contributors {
         width: 80vw;
+    }
+
+    .contributors-box {
+        font-size: 0.78rem;
     }
 }

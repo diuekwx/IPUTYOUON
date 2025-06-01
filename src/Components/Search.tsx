@@ -1,14 +1,19 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import './Search.css';
+import debounce from './Debounce';
 
 interface SearchProps {
   setTrack: React.Dispatch<React.SetStateAction<string | null>>;
   selectedTrack: string | null;
+  refreshSearch: boolean | null;
+  resetFunc: () => void;
 }
 
-export default function Search({ setTrack, selectedTrack }: SearchProps) {
+export default function Search({ setTrack, selectedTrack, refreshSearch, resetFunc }: SearchProps) {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
+  const debouncedQuery = debounce(searchTerm, 200);
+
 
   const handleSelect = (track: string) => {
     setTrack("spotify:track:" + track);
@@ -38,16 +43,35 @@ export default function Search({ setTrack, selectedTrack }: SearchProps) {
     }
   };
 
-  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value;
-    setSearchTerm(term);
+  // const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+  //   const term = event.target.value;
+  //   console.log("Search term:", term);
+  //   setSearchTerm(term);
 
-    if (term.trim() !== '') {
-      search(term);
-    } else {
+  //   if (term.trim() !== '') {
+  //     search(term);
+  //   } else {
+  //     setSearchResults([]);
+  //   }
+  // };
+  useEffect(() => {
+    
+    if (debouncedQuery.trim() === ''){
       setSearchResults([]);
+      return;
     }
-  };
+    if (debouncedQuery){
+      search(debouncedQuery);
+    }
+  }, [debouncedQuery]);
+
+  useEffect(() => {
+      if (refreshSearch) {
+      setSearchResults([]);
+      setSearchTerm('');
+      resetFunc();
+    }
+  }, [refreshSearch])
 
   return (
     <>
@@ -55,7 +79,7 @@ export default function Search({ setTrack, selectedTrack }: SearchProps) {
         type="text"
         placeholder="🔍 search for a song to recommend..."
         value={searchTerm}
-        onChange={handleSearch}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
       <div>
         {/* {searchResults.map((link: string, index: number) => (

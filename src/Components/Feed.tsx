@@ -11,6 +11,7 @@ export default function Feed() {
     const [nextPlaylist, setNextPlaylist] = useState<string | null>(null);
     const [animationState, setAnimationState] = useState<'idle' | 'out' | 'in'>('idle');
     const [contributorsList, setContributorsList] = useState<{ username: string, contribution: string }[] | null>(null);
+    const [refreshSearch, setRefreshSearch] = useState<boolean | null>(false);
 
     useEffect(() => {
         // initialize feed page when you first go to it
@@ -87,6 +88,7 @@ export default function Feed() {
     }
 
     const getFeed = async () => {
+        setRefreshSearch(true);
         const response = await fetch(`http://127.0.0.1:8080/api/playlist/feed`, {
             credentials: "include",
             method: 'GET',
@@ -107,9 +109,11 @@ export default function Feed() {
                 setNextPlaylist(data[Math.floor(Math.random() * data.length)]);
                 setAnimationState('out');
             }
-
-
         }
+    }
+
+    const resetRefresh = () => {
+        setRefreshSearch(false);
     }
 
     const handleAnimationEnd = () => {
@@ -163,7 +167,12 @@ export default function Feed() {
                 </div>
 
                 <div className="feed-right">
-                    <Search setTrack={setSelectedTrack} selectedTrack={selectedTrack} />
+                    
+                    <Search setTrack={setSelectedTrack} 
+                        selectedTrack={selectedTrack} 
+                        refreshSearch={refreshSearch} 
+                        resetFunc={() => resetRefresh()}/>
+                    {/* {refreshSearch ? resetRefresh() : null} */}
                     <button onClick={() => addToPlaylist()}
                         className={selectedTrack ? "pink-button" : "disabled-button"}
                         disabled={!selectedTrack}

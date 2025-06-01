@@ -2,16 +2,44 @@ import { useState, ChangeEvent } from 'react';
 import './Search.css';
 
 interface SearchProps {
-  setTrack: React.Dispatch<React.SetStateAction<string | null>>;
-  selectedTrack: string | null;
+  selectedPlaylist: string | null;
 }
 
-export default function Search({ setTrack, selectedTrack }: SearchProps) {
+export default function Search({ selectedPlaylist }: SearchProps) {
+  const [status, setStatus] = useState<string>("Recommend");
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
-  const handleSelect = (track: string) => {
-    setTrack("spotify:track:" + track);
+  const handleSelect = async (track: string) => {
+    const fullTrack = "spotify:track:" + track;
+
+    // add to playlist
+    try {
+      setStatus("Recommending...");
+      const response = await fetch(`http://127.0.0.1:8080/api/playlist/${selectedPlaylist}/add-tracks`, {
+        credentials: "include",
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: fullTrack,
+      });
+
+      if (response.ok) {
+        setStatus("Recommended!");
+        setTimeout(() => setStatus("Recommend"), 1500);
+
+      } else {
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        setStatus("An error occurred :(");
+        setTimeout(() => setStatus("Recommend"), 1500);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      setStatus("An error occurred :(");
+      setTimeout(() => setStatus("Recommend"), 1500);
+    }
   };
 
   const url = `https://open.spotify.com/embed/track/`
@@ -58,18 +86,6 @@ export default function Search({ setTrack, selectedTrack }: SearchProps) {
         onChange={handleSearch}
       />
       <div>
-        {/* {searchResults.map((link: string, index: number) => (
-                <iframe
-                    key={index}
-                    style={{ borderRadius: "12px" }}
-                    src={url+ link}
-                    width="100%"
-                    height="380"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    title={`Spotify playlist ${index}`} 
-                ></iframe>
-            ))} */}
         {searchResults.map((link: string, index: number) => (
           <div key={index} className="suggestion-card">
             <iframe
@@ -78,7 +94,7 @@ export default function Search({ setTrack, selectedTrack }: SearchProps) {
               allow="encrypted-media"
               className="song-searches"
             ></iframe>
-            <button onClick={() => handleSelect(link)} className="green-button">{selectedTrack === `spotify:track:${link}` ? "Selected" : "Select"}</button>
+            <button onClick={() => handleSelect(link)} className="green-button">{status}</button>
           </div>
         ))}
 

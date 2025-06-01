@@ -48,7 +48,7 @@
 .track-card {
     display: flex;
     gap: 3vw;
-    margin-top: 80px;
+    margin-top: 70px;
 }
 
 .feed-left {
@@ -56,6 +56,12 @@
     flex-direction: column;
     align-items: center;
     row-gap: 10px;
+}
+
+.left-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .playlist.hidden {

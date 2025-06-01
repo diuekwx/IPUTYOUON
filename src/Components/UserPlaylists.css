@@ -18,12 +18,17 @@
 }
 
 @media (max-width: 768px) {
+    .user-playlists {
+        min-height: 100vh;
+        width: 97vw;
+    }
+
     .user-playlists h1 {
         color: white;
         font-size: 2rem;
         width: 100%;
         text-align: center;
         line-height: 70px;
-        top: 15px;
+        margin-top: 50px;
     }
 }

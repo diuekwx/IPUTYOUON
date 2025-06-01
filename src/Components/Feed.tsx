@@ -165,8 +165,8 @@ export default function Feed() {
                 <div className="feed-right">
                     <Search setTrack={setSelectedTrack} selectedTrack={selectedTrack} />
                     <button onClick={() => addToPlaylist()}
-                        className={selectedTrack ? "pink-button" : "disabled-button"}
-                        disabled={!selectedTrack}
+                        className={selectedTrack || status === "Recommended!" ? "pink-button" : "disabled-button"}
+                        disabled={!selectedTrack || status === "Recommended!" || status === "Recommending song..."}
                     >
                         {status}
                     </button>

@@ -52,7 +52,7 @@
     color: white;
     font-size: 1.4rem;
     text-align: center;
-    width: 50vw;
+    width: 70vw;
 }
 
 .playlist-creation textarea:focus {
@@ -68,30 +68,16 @@
 
 @media (max-width: 1000px) {
     .playlist-creation h1 {
-        font-family: 'Spac3-halftone', sans-serif;
-        color: white;
         font-size: 2.5rem;
-        text-align: center;
     }
 }
 
 @media (max-width: 768px) {
     .playlist-creation textarea {
-        display: flex;
-        flex-direction: column;
-        resize: none;
-        border: none;
-        border-bottom: 3px solid white;
-        color: white;
         font-size: 1.2rem;
-        text-align: center;
-        width: 50vw;
     }
 
     .playlist-creation p {
-        width: 50vw;
-        text-align: center;
         font-size: 1rem;
-        color: white;
     }
 }

@@ -48,19 +48,19 @@
 .track-card {
     display: flex;
     gap: 3vw;
-    margin-top: 70px;
+    margin-top: 50px;
+    height: 80vh;
 }
 
 .feed-left {
     display: flex;
     flex-direction: column;
     align-items: center;
-    row-gap: 10px;
 }
 
 .left-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
 }
 
@@ -126,19 +126,51 @@ p {
     border-radius: 8px;
 }
 
-.contributors-list {
+.contributors-box {
     width: 40vw;
     height: 50vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 3px solid white;
-    background-color: black;
+    border: none;
+    background-color: rgb(55, 55, 55);
     border-radius: 8px;
-    position: absolute;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    padding: 25px;
+}
+
+.contributors {
+    height: 100%;
+    overflow-y: auto;
+    top: 25%;
+}
+
+.show-hide-contributors {
+    width: 100%;
+    text-align: right;
+    border: none;
+    color: rgb(139, 139, 139);
+    line-height: 10px;
+}
+
+.show-hide-contributors:hover {
+    color: hotpink;
+}
+
+.hidden-contributors {
+    width: 40vw;
+    height: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: rgb(55, 55, 55);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
     padding: 2%;
     overflow-y: auto;
     top: 25%;
@@ -148,7 +180,6 @@ p {
     .track-card {
         display: flex;
         flex-direction: column;
-        gap: 3vw;
         margin-top: 80px;
     }
 
@@ -163,7 +194,6 @@ p {
         display: flex;
         flex-direction: column;
         align-items: center;
-        row-gap: 0px;
     }
 
     .feed-right {
@@ -185,5 +215,14 @@ p {
     .playlist {
         width: 80vw;
         height: 30vh;
+    }
+
+    .contributors-box {
+        width: 80vw;
+        height: 35vh;
+    }
+
+    .hidden-contributors {
+        width: 80vw;
     }
 }

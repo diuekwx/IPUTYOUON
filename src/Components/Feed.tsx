@@ -8,6 +8,7 @@ export default function Feed() {
     const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>("initialize");
     const [nextPlaylist, setNextPlaylist] = useState<string | null>(null);
     const [animationState, setAnimationState] = useState<'idle' | 'out' | 'in'>('idle');
+    const [showContributors, setShowContributors] = useState<boolean | null>(true);
     const [contributorsList, setContributorsList] = useState<{ username: string, contribution: string }[] | null>(null);
     const [refreshSearch, setRefreshSearch] = useState<boolean | null>(false);
 
@@ -21,6 +22,13 @@ export default function Feed() {
             setAnimationState('in');
         }
     }, [selectedPlaylist, animationState, nextPlaylist]);
+
+    useEffect(() => {
+        if (selectedPlaylist && selectedPlaylist !== "initialize") {
+            getContributors();
+            setShowContributors(true);
+        }
+    }, [selectedPlaylist]);
 
     const url = `https://open.spotify.com/embed/playlist/`
 
@@ -38,10 +46,6 @@ export default function Feed() {
             console.log("Type:" + typeof data, Array.isArray(data), data)
             setContributorsList(data);
         }
-    }
-
-    const closeContributors = async () => {
-        setContributorsList(null);
     }
 
     const getFeed = async () => {
@@ -86,7 +90,7 @@ export default function Feed() {
         <div className="feed-page">
             <h1>COMMUNITY FEED</h1>
 
-            {contributorsList ? (
+            {/*contributorsList ? (
                 <div className="contributors-list" >
                     <ul>
                         {contributorsList.map((contributor, index) => (
@@ -97,7 +101,7 @@ export default function Feed() {
                     </ul>
                     <button onClick={closeContributors}>CLOSE</button>
                 </div>
-            ) : ''}
+            ) : ''*/}
 
             <div className="track-card">
                 <div className="feed-left">
@@ -119,18 +123,38 @@ export default function Feed() {
                         </div>
                     )}
 
+                    {showContributors ? (
+                        <div>
+                            <div className="contributors-box" >
+                                <div className="contributors" >
+                                    {contributorsList ? (
+                                        <ul>
+                                            {contributorsList.map((contributor, index) => (
+                                                <li key={index}>
+                                                    {contributor.username}: {contributor.contribution}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>This playlist has no contributors.<br></br>Be the first!</p>
+                                    )}
+                                </div>
+                                <button className="show-hide-contributors" onClick={() => setShowContributors(false)}><u>Hide Contributors</u></button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="hidden-contributors">
+                            <button className="show-hide-contributors" onClick={() => setShowContributors(true)}><u>Show Contributors</u></button>
+                        </div>
+                    )}
+
                     <div className="left-buttons">
                         <button onClick={getFeed} className="blue-button">Refresh</button>
-                        <button onClick={() => getContributors()}
-                            className={selectedPlaylist ? "pink-button" : "disabled-button"}
-                            disabled={!selectedPlaylist}>
-                            Get Contributors
-                        </button>
                     </div>
                 </div>
 
                 <div className="feed-right">
-                    <Search selectedPlaylist={selectedPlaylist} refreshState={refreshSearch} refreshSearch={() => resetRefresh()}/>
+                    <Search selectedPlaylist={selectedPlaylist} refreshState={refreshSearch} refreshSearch={() => resetRefresh()} />
 
                 </div>
             </div>

@@ -24,7 +24,7 @@ input:focus {
 }
 
 .green-button {
-    width: 170px;
+    width: 165px;
     padding: 2px 2px;
     word-break: break-word;
 }
@@ -32,4 +32,11 @@ input:focus {
 .green-button:hover {
     border-color: greenyellow;
     color: greenyellow;
+}
+
+@media (max-width: 900px) { 
+    .green-button {
+        font-size: 0.95rem;
+        width: 150px;
+    }
 }

@@ -13,12 +13,10 @@ export default function Feed() {
     const [refreshSearch, setRefreshSearch] = useState<boolean | null>(false);
     const [iframeKey, setIframeKey] = useState<number>(0);
 
+
     const handleIframeRefresh = async () => {
-        // setTimeout(() => {
         console.log("refreshing");
         setIframeKey(prevKey => prevKey + 1);
-        // }, 2000);
-    
   }
 
     useEffect(() => {

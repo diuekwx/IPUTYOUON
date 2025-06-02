@@ -17,7 +17,7 @@ export default function Feed() {
     const handleIframeRefresh = async () => {
         setIframeKey(prevKey => prevKey + 1);
         getContributors();
-  }
+    }
 
     useEffect(() => {
         // initialize feed page when you first go to it
@@ -74,7 +74,9 @@ export default function Feed() {
                 setSelectedPlaylist(data[Math.floor(Math.random() * data.length)]);
             }
             else {
-                setNextPlaylist(data[Math.floor(Math.random() * data.length)]);
+                // pick a random playlist that is NOT the one already shown
+                const candidates = data.filter((playlist: any) => playlist !== selectedPlaylist);
+                setNextPlaylist(candidates[Math.floor(Math.random() * candidates.length)]);
                 setAnimationState('out');
             }
         }
@@ -87,7 +89,6 @@ export default function Feed() {
     const handleAnimationEnd = () => {
         if (animationState === 'out') {
             setSelectedPlaylist(nextPlaylist);
-            //setAnimationState('in');
         } else if (animationState === 'in') {
             setAnimationState('idle');
         }
@@ -102,7 +103,6 @@ export default function Feed() {
                     {selectedPlaylist ? (
                         <iframe
                             key={iframeKey}
-                            //className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                             className={`playlist ${showContributors ? 'small' : 'large'} ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                             onAnimationEnd={handleAnimationEnd}
                             style={{ borderRadius: "12px" }}
@@ -122,7 +122,7 @@ export default function Feed() {
 
                     {selectedPlaylist && (
                         showContributors ? (
-                            <div className="contributors-box" >
+                            <div className={`contributors-box ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`} >
                                 <h2>PLAYLIST CONTRIBUTORS</h2>
                                 <div className="contributors" >
                                     {contributorsList ? (
@@ -159,11 +159,11 @@ export default function Feed() {
                 </div>
 
                 <div className="feed-right">
-                    <Search selectedPlaylist={selectedPlaylist} 
-                    refreshState={refreshSearch} 
-                    refreshSearch={() => resetRefresh()}
-                    iframeRefresh={() => handleIframeRefresh()}/>
-                
+                    <Search selectedPlaylist={selectedPlaylist}
+                        refreshState={refreshSearch}
+                        refreshSearch={() => resetRefresh()}
+                        iframeRefresh={() => handleIframeRefresh()} />
+
                 </div>
             </div>
 

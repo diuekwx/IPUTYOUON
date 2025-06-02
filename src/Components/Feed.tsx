@@ -15,8 +15,8 @@ export default function Feed() {
 
 
     const handleIframeRefresh = async () => {
-        console.log("refreshing");
         setIframeKey(prevKey => prevKey + 1);
+        getContributors();
   }
 
     useEffect(() => {
@@ -123,7 +123,7 @@ export default function Feed() {
                         showContributors ? (
                             <div className="contributors-box" >
                                 <p>PLAYLIST CONTRIBUTORS</p>
-                                <div className="contributors" >
+                                <div className="contributors">
                                     {contributorsList ? (
                                         <table>
                                             <thead><tr>

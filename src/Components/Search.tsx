@@ -6,15 +6,16 @@ interface SearchProps {
   selectedPlaylist: string | null;
   refreshState: boolean | null;
   refreshSearch: () => void;
+  iframeRefresh: () => void;
 }
 
-export default function Search({ selectedPlaylist, refreshState, refreshSearch }: SearchProps) {
+export default function Search({ selectedPlaylist, refreshState, refreshSearch, iframeRefresh}: SearchProps) {
   const [status, setStatus] = useState<string>("Recommend");
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
+  // const [iframeKey, setIframeKey] = useState<number>(0);
   const debouncedQuery = debounce(searchTerm, 200);
-
 
   const handleSelect = async (track: string) => {
     setSelectedTrack(track);
@@ -34,8 +35,9 @@ export default function Search({ selectedPlaylist, refreshState, refreshSearch }
 
       if (response.ok) {
         setStatus("Recommended!");
-
-      } else {
+        iframeRefresh();
+      } 
+      else {
         const errorText = await response.text();
         console.error("Error response:", errorText);
         setStatus("ERROR");
@@ -52,6 +54,8 @@ export default function Search({ selectedPlaylist, refreshState, refreshSearch }
       setTimeout(() => setStatus("Recommend"), 1500);
     }
   };
+
+
 
   const url = `https://open.spotify.com/embed/track/`
 

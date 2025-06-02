@@ -14,7 +14,6 @@ export default function Search({ selectedPlaylist, refreshState, refreshSearch, 
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
-  // const [iframeKey, setIframeKey] = useState<number>(0);
   const debouncedQuery = debounce(searchTerm, 200);
 
   const handleSelect = async (track: string) => {

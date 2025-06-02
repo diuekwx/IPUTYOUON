@@ -195,23 +195,38 @@ p {
 
 @media (max-width: 900px) {
     .track-card {
+        display: flex;
         flex-direction: column;
         margin-top: 80px;
     }
 
     .feed-page {
+        display: flex;
+        flex-direction: column;
         width: 97vw;
+        align-items: center;
+    }
+
+    .feed-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .feed-right {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         width: 100%;
         padding-bottom: 50px;
     }
 
     .feed-page h1 {
+        color: white;
         font-size: 2rem;
         position: relative;
         top: 55px;
+        text-align: center;
     }
 
     .playlist {
@@ -219,13 +234,20 @@ p {
         height: 22vh;
     }
 
+    .blue-button {
+        margin-top: 15px;
+    }
+
     .contributors-box {
         width: 80vw;
         height: 35vh;
-        font-size: 0.78rem;
     }
 
     .hidden-contributors {
         width: 80vw;
+    }
+
+    .contributors-box {
+        font-size: 0.78rem;
     }
 }

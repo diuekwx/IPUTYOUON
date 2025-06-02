@@ -147,7 +147,7 @@ export default function Feed() {
                             </div>
 
                         ) : (
-                            <div className="hidden-contributors">
+                            <div className={`hidden-contributors ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`} >
                                 <button className="show-hide-contributors" onClick={() => setShowContributors(true)}><u>Show Contributors</u></button>
                             </div>
                         )

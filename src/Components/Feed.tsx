@@ -11,6 +11,15 @@ export default function Feed() {
     const [showContributors, setShowContributors] = useState<boolean | null>(true);
     const [contributorsList, setContributorsList] = useState<{ username: string, contribution: string }[] | null>(null);
     const [refreshSearch, setRefreshSearch] = useState<boolean | null>(false);
+    const [iframeKey, setIframeKey] = useState<number>(0);
+
+    const handleIframeRefresh = async () => {
+        // setTimeout(() => {
+        console.log("refreshing");
+        setIframeKey(prevKey => prevKey + 1);
+        // }, 2000);
+    
+  }
 
     useEffect(() => {
         // initialize feed page when you first go to it
@@ -94,6 +103,7 @@ export default function Feed() {
                 <div className="feed-left">
                     {selectedPlaylist ? (
                         <iframe
+                            key={iframeKey}
                             className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                             onAnimationEnd={handleAnimationEnd}
                             style={{ borderRadius: "12px" }}
@@ -150,7 +160,11 @@ export default function Feed() {
                 </div>
 
                 <div className="feed-right">
-                    <Search selectedPlaylist={selectedPlaylist} refreshState={refreshSearch} refreshSearch={() => resetRefresh()} />
+                    <Search selectedPlaylist={selectedPlaylist} 
+                    refreshState={refreshSearch} 
+                    refreshSearch={() => resetRefresh()}
+                    iframeRefresh={() => handleIframeRefresh()}/>
+                
                 </div>
             </div>
 

@@ -15,8 +15,8 @@ export default function Feed() {
 
 
     const handleIframeRefresh = async () => {
-        console.log("refreshing");
         setIframeKey(prevKey => prevKey + 1);
+        getContributors();
   }
 
     useEffect(() => {

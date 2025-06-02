@@ -33,7 +33,7 @@
 .feed-page h1 {
     color: white;
     font-size: 2.8rem;
-    position: fixed;
+    position: relative;
     top: 15px;
     text-align: center;
 }
@@ -72,7 +72,15 @@
 
 .playlist {
     width: 40vw;
-    height: 75vh;
+    transition: height 0.3s ease;
+}
+
+.playlist.small {
+    height: 160px;
+}
+
+.playlist.large {
+    height: 405px;
 }
 
 .feed-right {
@@ -132,7 +140,6 @@ p {
 
 .contributors-box {
     width: 40vw;
-    height: 48vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -143,6 +150,9 @@ p {
     color: white;
     font-size: 1rem;
     padding: 25px;
+
+    height: 300px;
+    transition: height 0.3s ease;
 }
 
 .contributors {
@@ -152,11 +162,12 @@ p {
     scrollbar-color: hotpink transparent;
 }
 
-.contributors-box p {
+.contributors-box h2 {
     font-family: 'Spac3-halftone', sans-serif;
     color: hotpink;
     text-align: center;
     line-height: 20px;
+    font-size: 1.5rem;
 }
 
 .contributors-box th,
@@ -178,7 +189,6 @@ p {
 
 .hidden-contributors {
     width: 40vw;
-    height: 10vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -191,6 +201,9 @@ p {
     padding: 2%;
     overflow-y: auto;
     top: 25%;
+
+    height: 55px;
+    transition: height 0.3s ease;
 }
 
 @media (max-width: 900px) {

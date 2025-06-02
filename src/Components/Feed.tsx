@@ -102,7 +102,8 @@ export default function Feed() {
                     {selectedPlaylist ? (
                         <iframe
                             key={iframeKey}
-                            className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
+                            //className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
+                            className={`playlist ${showContributors ? 'small' : 'large'} ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                             onAnimationEnd={handleAnimationEnd}
                             style={{ borderRadius: "12px" }}
                             src={url + selectedPlaylist}
@@ -122,7 +123,7 @@ export default function Feed() {
                     {selectedPlaylist && (
                         showContributors ? (
                             <div className="contributors-box" >
-                                <p>PLAYLIST CONTRIBUTORS</p>
+                                <h2>PLAYLIST CONTRIBUTORS</h2>
                                 <div className="contributors" >
                                     {contributorsList ? (
                                         <table>

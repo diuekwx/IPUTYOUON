@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import spotify.recommender.DTO.ContributionDTO;
 import spotify.recommender.Entities.Playlist;
 import spotify.recommender.Entities.Users;
-import spotify.recommender.Service.PlaylistService;
-import spotify.recommender.Service.SpotifyService;
-import spotify.recommender.Service.TrackSuggestionService;
-import spotify.recommender.Service.UserService;
+import spotify.recommender.Service.*;
 
 import java.util.*;
 
@@ -25,12 +22,16 @@ public class PlaylistController {
     private final UserService userService;
     private final TrackSuggestionService trackSuggestionService;
     private final String baseUrl = "https://api.spotify.com/v1/";
+    private final RateLimiterService rateLimiterService;
+
     @Autowired
-    public PlaylistController(PlaylistService playlistService, SpotifyService spotifyService, UserService userService, TrackSuggestionService trackSuggestionService){
+    public PlaylistController(PlaylistService playlistService, SpotifyService spotifyService, UserService userService, TrackSuggestionService trackSuggestionService,
+                              RateLimiterService rateLimiterService){
         this.playlistService = playlistService;
         this.spotifyService = spotifyService;
         this.userService = userService;
         this.trackSuggestionService = trackSuggestionService;
+        this.rateLimiterService = rateLimiterService;
     }
 
 
@@ -112,7 +113,7 @@ public class PlaylistController {
 
     //uhhh authentication necessary? since were using the other persons token anyway to add...
     @PostMapping("/{playListId}/add-tracks")
-    public ResponseEntity<Void> addTracksToPlaylist(
+    public ResponseEntity<Boolean> addTracksToPlaylist(
             Authentication authentication,
         @PathVariable String playListId,
         @RequestBody String uris){
@@ -122,9 +123,8 @@ public class PlaylistController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         System.out.println(userid);
-        spotifyService.addTrackToPlaylist(userid, playListId, uris);
-        return  ResponseEntity.ok().build();
-
+        boolean added = spotifyService.addTrackToPlaylist(userid, playListId, uris);
+        return  ResponseEntity.ok(added);
     }
 
     // Return <List<Playlist>> ?

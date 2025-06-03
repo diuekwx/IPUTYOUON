@@ -57,6 +57,11 @@ public class TrackSuggestionService {
         return trackSuggestionRepo.save(trackSuggestion);
     }
 
+    public boolean alreadyInPlaylist(String trackUri, String playlist){
+        Long playlistId = playlistRepo.findBySpotifyPlaylistId(playlist).getId();
+        return trackSuggestionRepo.findByTrack(trackUri, playlistId).isPresent();
+    }
+
     public List<ContributionDTO> getContributors(String playlistId) {
         Playlist p = playlistRepo.findBySpotifyPlaylistId(playlistId);
         Long id = p.getId();

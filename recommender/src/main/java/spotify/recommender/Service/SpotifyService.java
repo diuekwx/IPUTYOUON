@@ -122,7 +122,11 @@ public class SpotifyService {
 
     // owner of the playlist will be adding it, might need to use their refresh token.
     // get rid of recursion probably lol... also check if spotify:track: is prepended for the uris
-    public void addTrackToPlaylist(Users user, String playlistId, String trackUri){
+    public boolean addTrackToPlaylist(Users user, String playlistId, String trackUri){
+        if (trackSuggestionService.alreadyInPlaylist(trackUri, playlistId)){
+            return true;
+        }
+
         Playlist p = playlistRepo.findBySpotifyPlaylistId(playlistId);
         System.out.println(p);
         Users ownerOfPlaylist = p.getUserOwner();
@@ -152,7 +156,7 @@ public class SpotifyService {
             String altered = trackUri.replace("spotify:track:", "");
             SpotifyDTO spotifyDTO = spotifyTrackService.getSongAndArtistName(ownerOfPlaylist, altered);
             trackSuggestionService.saveTrackSuggestion(user, trackUri, p, spotifyDTO.getArtist(), spotifyDTO.getSongName());
-            System.out.println("request went through");
+            return true;
         }
         catch (HttpClientErrorException.Unauthorized e){
 //        catch (Exception e){
@@ -168,7 +172,7 @@ public class SpotifyService {
             String altered = trackUri.replace("spotify:track:", "");
             SpotifyDTO spotifyDTO = spotifyTrackService.getSongAndArtistName(user, trackUri);
             trackSuggestionService.saveTrackSuggestion(user, trackUri, p, spotifyDTO.getArtist(), spotifyDTO.getSongName());
-
+            return true;
 //            addTrackToPlaylist(user, playlistId, trackUri);
         }
 

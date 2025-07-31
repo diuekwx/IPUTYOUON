@@ -9,12 +9,9 @@ import spotify.recommender.Entities.Users;
 import spotify.recommender.Repository.PlaylistRepo;
 import spotify.recommender.Repository.TrackSuggestionRepo;
 import spotify.recommender.Repository.UserRepo;
-import spotify.recommender.Service.SpotifyTrackService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TrackSuggestionService {
@@ -58,8 +55,8 @@ public class TrackSuggestionService {
     }
 
     public boolean alreadyInPlaylist(String trackUri, String playlist){
-        Long playlistId = playlistRepo.findBySpotifyPlaylistId(playlist).getId();
-        return trackSuggestionRepo.findByTrack(trackUri, playlistId).isPresent();
+        Playlist playlistId = playlistRepo.findBySpotifyPlaylistId(playlist);
+        return trackSuggestionRepo.findByTrackUriAndPlaylistId(trackUri, playlistId).isPresent();
     }
 
     public List<ContributionDTO> getContributors(String playlistId) {

@@ -22,16 +22,13 @@ public class PlaylistController {
     private final UserService userService;
     private final TrackSuggestionService trackSuggestionService;
     private final String baseUrl = "https://api.spotify.com/v1/";
-    private final RateLimiterService rateLimiterService;
 
     @Autowired
-    public PlaylistController(PlaylistService playlistService, SpotifyService spotifyService, UserService userService, TrackSuggestionService trackSuggestionService,
-                              RateLimiterService rateLimiterService){
+    public PlaylistController(PlaylistService playlistService, SpotifyService spotifyService, UserService userService, TrackSuggestionService trackSuggestionService){
         this.playlistService = playlistService;
         this.spotifyService = spotifyService;
         this.userService = userService;
         this.trackSuggestionService = trackSuggestionService;
-        this.rateLimiterService = rateLimiterService;
     }
 
 

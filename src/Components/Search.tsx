@@ -1,5 +1,6 @@
 import { useState, ChangeEvent } from 'react';
 import './Search.css';
+import { API_BASE_URL } from '../api/api';
 
 interface SearchProps {
   setTrack: React.Dispatch<React.SetStateAction<string | null>>;
@@ -18,7 +19,7 @@ export default function Search({ setTrack, selectedTrack }: SearchProps) {
 
   const search = async (term: string) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/api/playlist/search?query=${encodeURIComponent(term)}`, {
+      const response = await fetch(`${API_BASE_URL}/api/playlist/search?query=${encodeURIComponent(term)}`, {
         credentials: 'include',
         method: 'GET',
         headers: {

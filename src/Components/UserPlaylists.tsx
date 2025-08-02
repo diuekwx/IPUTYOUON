@@ -4,6 +4,7 @@ import cd_disk from '../assets/cd.png';
 import './LoadingScreen.css';
 import './UserPlaylists.css';
 import HomeButton from './HomeButton.tsx';
+import { API_BASE_URL } from '../api/api.ts';
 
 export default function UserPlaylists() {
     const [playlistIds, setPlaylistIds] = useState([]);
@@ -12,7 +13,7 @@ export default function UserPlaylists() {
     useEffect(() => {
         const getUserPlaylist = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8080/api/playlist/get-user-playlist', {
+                const response = await fetch(`${API_BASE_URL}/api/playlist/get-user-playlist`, {
                     credentials: 'include',
                     method: 'GET',
                     headers: {

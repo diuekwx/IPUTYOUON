@@ -4,6 +4,7 @@ import cd_disk from '../assets/cd.png';
 import spotify_logo from '../assets/spotify-logo.png';
 import './UserHome.css';
 import './LoadingScreen.css';
+import { API_BASE_URL } from '../api/api';
 
 
 export default function UserHome() {
@@ -14,7 +15,7 @@ export default function UserHome() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch("http://127.0.0.1:8080/api/spotify/me", {
+                const res = await fetch(`${API_BASE_URL}/api/spotify/me`, {
                     credentials: "include",
                 });
 
@@ -64,7 +65,7 @@ export default function UserHome() {
                         </div>
                     ) : (
                         <div>
-                            <button className="login-button" onClick={() => window.location.href = 'http://127.0.0.1:8080/oauth2/authorization/spotify'}
+                            <button className="login-button" onClick={() => window.location.href = `${API_BASE_URL}/oauth2/authorization/spotify`}
                             >Log In<img src={spotify_logo} width="30px"></img></button>
                         </div>
                     )}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Search from './Search';
 import './Feed.css';
 import HomeButton from './HomeButton.tsx';
+import { API_BASE_URL } from '../api/api.ts';
 
 
 export default function Feed() {
@@ -27,7 +28,7 @@ export default function Feed() {
         try {
             setStatus("Recommending song...");
             console.log("using:", selectedPlaylist)
-            const response = await fetch(`http://127.0.0.1:8080/api/playlist/${selectedPlaylist}/add-tracks`, {
+            const response = await fetch(`${API_BASE_URL}/api/playlist/${selectedPlaylist}/add-tracks`, {
                 credentials: "include",
                 method: 'POST',
                 headers: {
@@ -67,7 +68,7 @@ export default function Feed() {
     const url = `https://open.spotify.com/embed/playlist/`
 
     const getContributors = async () => {
-        const response = await fetch(`http://127.0.0.1:8080/api/playlist/${selectedPlaylist}/contributors`, {
+        const response = await fetch(`${API_BASE_URL}/api/playlist/${selectedPlaylist}/contributors`, {
             credentials: "include",
             method: 'GET',
             headers: {
@@ -87,7 +88,7 @@ export default function Feed() {
     }
 
     const getFeed = async () => {
-        const response = await fetch(`http://127.0.0.1:8080/api/playlist/feed`, {
+        const response = await fetch(`${API_BASE_URL}/api/playlist/feed`, {
             credentials: "include",
             method: 'GET',
             headers: {

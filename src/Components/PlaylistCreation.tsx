@@ -1,28 +1,18 @@
 import { useState } from "react";
-import { useSearchParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import './PlaylistCreation.css';
 import HomeButton from './HomeButton.tsx';
+import { API_BASE_URL } from "../api/api.ts";
 
 export default function PlaylistCreation() {
     const [status, setStatus] = useState<string>("CREATE");
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
-    const [searchParams] = useSearchParams();
-    const sessionId = searchParams.get('session');
-    const navigate = useNavigate();
 
-
-    const printStuff = () => {
-        console.log('Name:', name);
-        console.log('Desc:', desc);
-
-    }
 
     const createPlaylistz = async () => {
         try {
             setStatus("Creating playlist...");
-            const response = await fetch('http://127.0.0.1:8080/api/playlist/create', {
+            const response = await fetch(`${API_BASE_URL}/api/playlist/create`, {
                 credentials: "include",
                 method: 'POST',
                 headers: {
@@ -43,7 +33,6 @@ export default function PlaylistCreation() {
             setDesc('');
 
             if (response.ok) {
-                const data = await response.json();
                 setStatus("CREATED!");
                 setTimeout(() => {
                     setStatus('CREATE');

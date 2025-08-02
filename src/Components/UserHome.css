@@ -47,7 +47,7 @@ body {
 .homepage {
   display: flex;
   flex-direction: column;
-  width: 55vw;
+  width: 60vw;
   position: absolute;
   right: 10vw;
   top: 6vh;
@@ -128,4 +128,65 @@ body {
   color: greenyellow;
 }
 
-@media (max-width: 768px) {}
+
+@media (max-width: 1300px) {
+  .cd-spin {
+    width: 65vw;
+    top: 0px;
+  }
+
+  .homepage {
+    width: 70vw;
+  }
+
+  .homepage h1 {
+    font-size: 8rem;
+  }
+
+  .homepage p {
+    width: 40vw;
+  }
+
+  .homepage-buttons button {
+    width: 40vw;
+  }
+}
+
+@media (max-width: 1000px) {
+  .homepage h1 {
+    font-size: 7rem;
+  }
+}
+
+@media (max-width: 675px) {
+  .cd-spin {
+    width: 100%;
+    top: -100px;
+    left: -100px;
+  }
+
+  .homepage {
+    width: 75vw;
+    top: 10vh;
+    left: 10vw;
+  }
+
+  .homepage h1 {
+    font-size: 6rem;
+    text-align: right;
+  }
+
+  .homepage p {
+    font-size: 1rem;
+    width: 50vw;
+  }
+
+  .homepage-buttons {
+    align-items: center;
+    bottom: 50px;
+  }
+
+  .homepage-buttons button {
+    width: 75vw;
+  }
+}

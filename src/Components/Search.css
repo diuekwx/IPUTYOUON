@@ -23,7 +23,20 @@ input:focus {
     flex: 1;
 }
 
+.green-button {
+    width: 165px;
+    padding: 2px 2px;
+    word-break: break-word;
+}
+
 .green-button:hover {
     border-color: greenyellow;
     color: greenyellow;
+}
+
+@media (max-width: 900px) { 
+    .green-button {
+        font-size: 0.95rem;
+        width: 150px;
+    }
 }

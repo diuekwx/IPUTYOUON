@@ -6,12 +6,19 @@ import { API_BASE_URL } from '../api/api.ts';
 
 
 export default function Feed() {
-    const [status, setStatus] = useState<string>("Recommend Selected Song");
-    const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
     const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>("initialize");
     const [nextPlaylist, setNextPlaylist] = useState<string | null>(null);
     const [animationState, setAnimationState] = useState<'idle' | 'out' | 'in'>('idle');
+    const [showContributors, setShowContributors] = useState<boolean | null>(true);
     const [contributorsList, setContributorsList] = useState<{ username: string, contribution: string }[] | null>(null);
+    const [refreshSearch, setRefreshSearch] = useState<boolean | null>(false);
+    const [iframeKey, setIframeKey] = useState<number>(0);
+
+
+    const handleIframeRefresh = async () => {
+        setIframeKey(prevKey => prevKey + 1);
+        getContributors();
+    }
 
     useEffect(() => {
         // initialize feed page when you first go to it
@@ -24,46 +31,12 @@ export default function Feed() {
         }
     }, [selectedPlaylist, animationState, nextPlaylist]);
 
-    const addToPlaylist = async () => {
-        try {
-            setStatus("Recommending song...");
-            console.log("using:", selectedPlaylist)
-            const response = await fetch(`${API_BASE_URL}/api/playlist/${selectedPlaylist}/add-tracks`, {
-                credentials: "include",
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: selectedTrack,
-            });
-
-            if (response.ok) {
-                //const data = await response.json();
-                //console.log("Added track to playlist:", data);
-                setStatus("Recommended!");
-                setTimeout(() => {
-                    setStatus('Recommend Selected Song');
-                }, 1500);
-                
-                // reset selected track
-                setSelectedTrack(null);
-                // TODO: need to update playlistEmbed to show the added song
-            } else {
-                const errorText = await response.text();
-                console.error("Error response:", errorText);
-                setStatus("An error occured :(");
-                setTimeout(() => {
-                    setStatus('Recommend Selected Song');
-                }, 1500);
-            }
-        } catch (err) {
-            console.error("Network error:", err);
-            setStatus("An error occured :(");
-                setTimeout(() => {
-                    setStatus('Recommend Selected Song');
-                }, 1500);
-        }  
-    }
+    useEffect(() => {
+        if (selectedPlaylist && selectedPlaylist !== "initialize") {
+            getContributors();
+            setShowContributors(true);
+        }
+    }, [selectedPlaylist]);
 
     const url = `https://open.spotify.com/embed/playlist/`
 
@@ -83,11 +56,8 @@ export default function Feed() {
         }
     }
 
-    const closeContributors = async () => {
-        setContributorsList(null);
-    }
-
     const getFeed = async () => {
+        setRefreshSearch(true);
         const response = await fetch(`${API_BASE_URL}/api/playlist/feed`, {
             credentials: "include",
             method: 'GET',
@@ -105,18 +75,21 @@ export default function Feed() {
                 setSelectedPlaylist(data[Math.floor(Math.random() * data.length)]);
             }
             else {
-                setNextPlaylist(data[Math.floor(Math.random() * data.length)]);
+                // pick a random playlist that is NOT the one already shown
+                const candidates = data.filter((playlist: any) => playlist !== selectedPlaylist);
+                setNextPlaylist(candidates[Math.floor(Math.random() * candidates.length)]);
                 setAnimationState('out');
             }
-
-
         }
+    }
+
+    const resetRefresh = () => {
+        setRefreshSearch(false);
     }
 
     const handleAnimationEnd = () => {
         if (animationState === 'out') {
             setSelectedPlaylist(nextPlaylist);
-            //setAnimationState('in');
         } else if (animationState === 'in') {
             setAnimationState('idle');
         }
@@ -126,24 +99,12 @@ export default function Feed() {
         <div className="feed-page">
             <h1>COMMUNITY FEED</h1>
 
-            {contributorsList ? (
-                <div className="contributors-list" >
-                    <ul>
-                        {contributorsList.map((contributor, index) => (
-                            <li key={index}>
-                                - {contributor.username}: {contributor.contribution}
-                            </li>
-                        ))}
-                    </ul>
-                    <button onClick={closeContributors}>CLOSE</button>
-                </div>
-            ) : ''}
-
             <div className="track-card">
                 <div className="feed-left">
                     {selectedPlaylist ? (
                         <iframe
-                            className={`playlist ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
+                            key={iframeKey}
+                            className={`playlist ${showContributors ? 'small' : 'large'} ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`}
                             onAnimationEnd={handleAnimationEnd}
                             style={{ borderRadius: "12px" }}
                             src={url + selectedPlaylist}
@@ -160,20 +121,50 @@ export default function Feed() {
                     )}
 
 
-                    <button onClick={getFeed} className="blue-button">Refresh</button>
+                    {selectedPlaylist && (
+                        showContributors ? (
+                            <div className={`contributors-box ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`} >
+                                <h2>PLAYLIST CONTRIBUTORS</h2>
+                                <div className="contributors" >
+                                    {contributorsList ? (
+                                        <table>
+                                            <thead><tr>
+                                                <th style={{ textAlign: "left" }}><u>Username</u></th>
+                                                <th style={{ textAlign: "right" }}><u>Song</u></th>
+                                            </tr></thead>
+                                            <tbody>
+                                                {contributorsList.map((contributor, index) => (
+                                                    <tr key={index}>
+                                                        <td style={{ textAlign: "left" }}>{contributor.username}</td>
+                                                        <td style={{ textAlign: "right" }}>{contributor.contribution}</td>
+                                                    </tr>))}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <p>This playlist has no contributors.<br></br>Be the first!</p>
+                                    )}
+                                </div>
+                                <button className="show-hide-contributors" onClick={() => setShowContributors(false)}><u>Hide Contributors</u></button>
+                            </div>
+
+                        ) : (
+                            <div className={`hidden-contributors ${animationState === 'out' ? 'slide-out' : animationState === 'in' ? 'slide-in' : ''}`} >
+                                <button className="show-hide-contributors" onClick={() => setShowContributors(true)}><u>Show Contributors</u></button>
+                            </div>
+                        )
+                    )}
+
+                    <div className="left-buttons">
+                        <button onClick={getFeed} className="blue-button">Refresh</button>
+                    </div>
                 </div>
 
                 <div className="feed-right">
-                    <Search setTrack={setSelectedTrack} selectedTrack={selectedTrack} />
-                    <button onClick={() => addToPlaylist()}
-                        className={selectedTrack ? "pink-button" : "disabled-button"}
-                        disabled={!selectedTrack}
-                    >
-                        {status}
-                    </button>
-                    <button onClick={() => getContributors()} className="pink-button">
-                        Get Contributors
-                    </button>
+                    <Search selectedPlaylist={selectedPlaylist}
+                        refreshState={refreshSearch}
+                        refreshSearch={() => resetRefresh()}
+                        iframeRefresh={() => handleIframeRefresh()} />
+
                 </div>
             </div>
 

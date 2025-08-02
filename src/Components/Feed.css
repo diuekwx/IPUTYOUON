@@ -33,7 +33,7 @@
 .feed-page h1 {
     color: white;
     font-size: 2.8rem;
-    position: fixed;
+    position: relative;
     top: 15px;
     text-align: center;
 }
@@ -48,14 +48,21 @@
 .track-card {
     display: flex;
     gap: 3vw;
-    margin-top: 80px;
+    margin-top: 50px;
+    min-height: 560px;
+    overflow-y: hidden;
 }
 
 .feed-left {
     display: flex;
     flex-direction: column;
     align-items: center;
-    row-gap: 10px;
+}
+
+.left-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .playlist.hidden {
@@ -66,14 +73,22 @@
 
 .playlist {
     width: 40vw;
-    height: 75vh;
+    transition: height 0.3s ease;
+}
+
+.playlist.small {
+    height: 160px;
+}
+
+.playlist.large {
+    height: 405px;
 }
 
 .feed-right {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 30vw;
+    min-width: 30vw;
 }
 
 button {
@@ -82,6 +97,10 @@ button {
     border-radius: 8px;
     color: white;
     font-size: 1rem;
+}
+
+.blue-button {
+    margin-top: 15px;
 }
 
 .blue-button:hover {
@@ -120,35 +139,107 @@ p {
     border-radius: 8px;
 }
 
-.contributors-list {
+.contributors-box {
     width: 40vw;
-    height: 50vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 3px solid white;
-    background-color: black;
+    border: none;
+    background-color: rgb(55, 55, 55);
     border-radius: 8px;
-    position: absolute;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    padding: 25px;
+
+    height: 300px;
+    transition: height 0.3s ease;
+}
+
+.contributors {
+    height: 75vh;
+    overflow-y: auto;
+    top: 25%;
+    scrollbar-color: hotpink transparent;
+}
+
+.contributors-box h2 {
+    font-family: 'Spac3-halftone', sans-serif;
+    color: hotpink;
+    text-align: center;
+    line-height: 20px;
+    font-size: 1.5rem;
+}
+
+.contributors-box th,
+.contributors-box td {
+    padding: 0.5em 1em;
+}
+
+.show-hide-contributors {
+    width: 100%;
+    text-align: right;
+    border: none;
+    color: rgb(139, 139, 139);
+    line-height: 10px;
+}
+
+.show-hide-contributors:hover {
+    color: hotpink;
+}
+
+.hidden-contributors {
+    width: 40vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: rgb(55, 55, 55);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
     padding: 2%;
     overflow-y: auto;
     top: 25%;
+
+    height: 55px;
+    transition: height 0.3s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+    .track-card {
+        flex-direction: column;
+        margin-top: 80px;
+    }
+
+    .feed-page {
+        width: 97vw;
+    }
+
+    .feed-right {
+        width: 100%;
+        padding-bottom: 50px;
+    }
+
     .feed-page h1 {
-        color: white;
         font-size: 2rem;
-        position: fixed;
-        top: 15px;
-        text-align: center;
+        position: relative;
+        top: 55px;
     }
 
     .playlist {
-        width: 40vw;
-        height: 30vh;
+        width: 80vw;
+        height: 22vh;
+    }
+
+    .contributors-box {
+        width: 80vw;
+        height: 35vh;
+        font-size: 0.78rem;
+    }
+
+    .hidden-contributors {
+        width: 80vw;
     }
 }

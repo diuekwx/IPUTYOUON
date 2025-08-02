@@ -39,7 +39,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // Allow both localhost and 127.0.0.1 for development flexibility
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173", "https://luminous-charisma-production.up.railway.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*")); // Or be more specific if preferred
         config.setExposedHeaders(List.of("Set-Cookie", "Authorization")); // Expose Set-Cookie header
@@ -63,6 +63,7 @@ public class SecurityConfig {
                                            CustomOAuth2Service customOAuth2UserService,
                                            SecurityContextRepository securityContextRepository) throws Exception { // Inject the repository
         http
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 // explicitly configure the securityContextRepository

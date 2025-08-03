@@ -8,11 +8,16 @@ import Feed from './Components/Feed';
 import PlaylistCreation from './Components/PlaylistCreation';
 import UserPlaylists from './Components/UserPlaylists';
 import SpotifyRedirectHandler from './Components/SpotifyRedirectHandler';
+import HomePage from './Components/HomePage';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <UserHome />
+  },
+  {
+    path:'/Home',
+    element: <HomePage />
   },
   {
     path: '/login/oauth2/code/spotify', 

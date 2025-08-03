@@ -6,6 +6,6 @@ export default function HomeButton() {
     const navigate = useNavigate();
 
     return (
-        <button className="home-button" onClick={() => navigate('/')}><img src={home}></img></button>
+        <button className="home-button" onClick={() => navigate('/Home')}><img src={home}></img></button>
     )
 }

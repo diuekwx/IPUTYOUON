@@ -5,7 +5,7 @@ export default function SpotifyRedirectHandler() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        navigate('/', { replace: true });
+        navigate('/Home', { replace: true });
     }, [navigate]);
 
     return (

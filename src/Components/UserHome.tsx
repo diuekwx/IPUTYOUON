@@ -15,6 +15,7 @@ export default function UserHome() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
+                console.log("base url" + API_BASE_URL);
                 const res = await fetch(`${API_BASE_URL}/api/spotify/me`, {
                     credentials: "include",
                 });

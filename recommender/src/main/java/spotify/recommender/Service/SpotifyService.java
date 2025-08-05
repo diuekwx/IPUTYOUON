@@ -128,14 +128,12 @@ public class SpotifyService {
         }
 
         Playlist p = playlistRepo.findBySpotifyPlaylistId(playlistId);
-        System.out.println(p);
+
         Users ownerOfPlaylist = p.getUserOwner();
 
-        System.out.println("BEFOREHAND");
-        System.out.println("ownerofplaylist" + ownerOfPlaylist);
         authService.checkExpiry(ownerOfPlaylist);
         String accessToken = decryptedAccessToken(ownerOfPlaylist);
-        System.out.println("access token of Owner: " + accessToken);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -200,10 +198,9 @@ public class SpotifyService {
     public List<String> syncDb(Users user){
         // all user playlist in db
         List<Playlist> all = playlistService.getUsersPlaylist(user);
-
         // all their playlist from spotify and in the db (if removed from spotify library, wont be in here)
         List<String> allPlaylistIds = getAlluserPlaylist(user);
-
+        System.out.println("playlists" + allPlaylistIds);
         //go through all playlist in db, remove the ones not on their spotify
         for (Playlist p: all){
             String id = p.getSpotifyPlaylistId();
@@ -252,6 +249,7 @@ public class SpotifyService {
 //                    playlistList.add(playlistId);
 //                }
                 }
+                System.out.println("userplaylists" + playlists);
                 return playlists;
             }
             catch (HttpClientErrorException e){

@@ -56,7 +56,8 @@ public class TrackSuggestionService {
 
     public boolean alreadyInPlaylist(String trackUri, String playlist){
         Playlist playlistId = playlistRepo.findBySpotifyPlaylistId(playlist);
-        return trackSuggestionRepo.findByTrackUriAndPlaylistId(trackUri, playlistId).isPresent();
+        return trackSuggestionRepo.findByTrackUriAndPlaylist(trackUri, playlistId).isPresent();
+
     }
 
     public List<ContributionDTO> getContributors(String playlistId) {

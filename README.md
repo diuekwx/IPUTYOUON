@@ -13,6 +13,6 @@ IPUTYOUON is a social music recommendation platform that leverages the Spotify A
 
 💬 Real-Time Interaction: Recommend tracks live and engage with others’ music collections.
 
-**Demo**
+**Youtube Demo**
 
 [![Demo](https://img.youtube.com/vi/ROpzlirvoRo/0.jpg)](https://youtu.be/ROpzlirvoRo)
